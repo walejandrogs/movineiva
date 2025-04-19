@@ -1,0 +1,35 @@
+<!-- app-filter.component.html -->
+<div class="container">
+    <!-- Sección Inicio -->
+    <div class="mb-3 mt-5">
+      <button class="btn btn-outline-success btn-sm mb-2" (click)="useMyLocation()">
+        Mi ubicación
+      </button>
+      <h5 class="text-dark">Inicio</h5>
+      <div class="d-flex align-items-center gap-2">
+        <select class="form-select form-select-sm w-auto" [(ngModel)]="origenSeleccionado" (change)="onSeleccionOrigenDestino()" [disabled]="deshabilitarOrigenDestino">
+          <option selected disabled>Seleccione un punto de inicio</option>
+          <option *ngFor="let lugar of lugaresInicio" [value]="lugar">{{ lugar }}</option>
+        </select>
+      </div>
+    </div>
+  
+    <!-- Sección Destino -->
+    <div class="mb-3">
+      <h5 class="text-dark">Destino</h5>
+      <select class="form-select form-select-sm" [(ngModel)]="destinoSeleccionado" (change)="onSeleccionOrigenDestino()" [disabled]="deshabilitarOrigenDestino">
+        <option selected disabled>Seleccione un destino</option>
+        <option *ngFor="let lugar of lugaresDestino" [value]="lugar">{{ lugar }}</option>
+      </select>
+    </div>
+  
+    <!-- Sección Rutas -->
+    <div>
+      <h5 class="text-dark" >Rutas</h5>
+      <select class="form-select form-select-sm" [(ngModel)]="rutaSeleccionadaArchivo" (change)="onSeleccionRuta($event)" [disabled]="deshabilitarRutas">
+        <option selected disabled>Seleccione una ruta</option>
+        <option *ngFor="let ruta of rutas">{{ ruta.nombre }}</option>
+      </select>
+    </div>
+    <button class="btn btn-outline-primary btn-sm mb-2 mt-2" (click)="limpiarFiltros()">Limpiar filtros</button>
+  </div>
