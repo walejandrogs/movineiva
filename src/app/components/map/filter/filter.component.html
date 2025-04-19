@@ -31,5 +31,7 @@
         <option *ngFor="let ruta of rutas">{{ ruta.nombre }}</option>
       </select>
     </div>
+    <h5 class="text-dark">Descripción</h5>
+    <textarea class="form-control" rows="4" [value]="description" disabled></textarea>
     <button class="btn btn-outline-primary btn-sm mb-2 mt-2" (click)="limpiarFiltros()">Limpiar filtros</button>
   </div>

@@ -20,6 +20,7 @@ export class FilterComponent {
   origenSeleccionado: string | null = null;
   destinoSeleccionado: string | null = null;
   rutaSeleccionadaArchivo: string | null = null;
+  description: string = '';
   
   lugaresInicio = ['Punto A', 'Punto B'];
   lugaresDestino = ['Punto X', 'Punto Y'];
@@ -63,6 +64,12 @@ export class FilterComponent {
       // Aquí podrías emitir algún evento si planeas usar estos valores
     }
   }
+
+  // Función para actualizar la descripción
+  addDescription(description: string) {
+    this.description = description; // Guardar la descripción recibida
+  }
+  
 
   limpiarFiltros() {
     this.origenSeleccionado = null;
