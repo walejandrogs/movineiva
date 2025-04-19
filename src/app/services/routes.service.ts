@@ -14,8 +14,11 @@ export class RoutesService {
     { nombre: 'Ruta 106 - Regreso', archivo: 'ruta106Regreso.geojson' },
     // etc.
   ];
-
   
+  cargarParaderosGeoJSON(): Observable<any> {
+    return this.http.get<any>('assets/routes/paraderos.geojson'); // Asegúrate de que la ruta sea correcta
+  }
+
   // Devuelve solo la lista de rutas disponibles con nombre y archivo
   cargarTodasLasRutas(): Observable<{ nombre: string, archivo: string }[]> {
     return of(this.rutas); // devuelve la lista directamente

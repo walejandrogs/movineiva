@@ -80,6 +80,7 @@ export class FilterComponent {
     this.rutaSeleccionada.emit(null);
     this.mapService.clearUserLocation();
     this.mapService.resetMapView();
+    this.description = "";
   }
 }
 

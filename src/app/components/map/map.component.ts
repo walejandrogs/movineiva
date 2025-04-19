@@ -4,6 +4,10 @@ import { FilterComponent } from './filter/filter.component';
 import { CommonModule } from '@angular/common';
 import { MapService } from '../../services/map.service';
 import { RoutesService } from '../../services/routes.service';
+import * as turf from '@turf/turf';
+import { point, lineString } from '@turf/helpers';
+import booleanPointOnLine from '@turf/boolean-point-on-line';
+
 @Component({
   selector: 'app-map',
   imports: [FilterComponent, CommonModule],
@@ -13,6 +17,7 @@ import { RoutesService } from '../../services/routes.service';
 export class MapComponent implements OnInit {
 
   private rutaActual: L.GeoJSON | null = null;
+  paraderos: any[] = [];
   rutaLayer: L.Layer | null = null;
   @ViewChild(FilterComponent, { static: false }) filterComponent!: FilterComponent;
 
@@ -32,6 +37,13 @@ export class MapComponent implements OnInit {
   ngOnInit(): void {
     // Inicializar el mapa desde el servicio
     this.mapService.initMap('map', [2.927300, -75.281890], 13);
+    this.cargarParaderos();
+  }
+
+  cargarParaderos(): void {
+    this.routesService.cargarParaderosGeoJSON().subscribe((data) => {
+      this.paraderos = data.features; // Guardar los paraderos en la propiedad 'paraderos'
+    });
   }
 
   usarMiUbicacion() {
@@ -61,14 +73,15 @@ export class MapComponent implements OnInit {
   
           // Obtener la descripción
           const description = data.features[0].properties.description || 'No disponible';
-  
-          // Aquí llamamos directamente a la función para actualizar la descripción en FilterComponent
           this.filterComponent.addDescription(description);
   
           // Agregar la nueva ruta al mapa
           const capa = L.geoJSON(data);
           capa.addTo(this.mapService.getMap());
           this.mapService.getMap().fitBounds(capa.getBounds());
+  
+          // Filtrar y cargar los paraderos cercanos a la ruta
+          this.mapService.cargarParaderos(this.paraderos, data);
   
           // Guardar la capa actual para poder eliminarla después
           this.rutaActual = capa;
@@ -100,9 +113,12 @@ export class MapComponent implements OnInit {
       // Centrar el mapa en la nueva ruta
       const bounds = this.rutaActual.getBounds();
       map.fitBounds(bounds);
+
+      
     } else if (geojsonData) {
       console.error('El objeto no es un GeoJSON válido');
     }
   }
+  
   
 }

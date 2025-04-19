@@ -1,14 +1,27 @@
 import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import * as turf from '@turf/turf';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MapService {
-
+  iconoParadero = L.icon({
+    iconUrl: 'assets/images/marker-icon.png',
+    //shadowUrl: 'assets/images/marker-shadow.png',
+    iconSize: [15, 20],
+    iconAnchor: [6, 20],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
   private map!: L.Map;
   private userMarker: L.Marker | null = null;
-
+  private paraderosLayer: L.LayerGroup | null = null;
+  constructor(private http: HttpClient) {}
+  // 👇 Define un icono personalizado
+  
   initMap(mapId: string, coords: [number, number], zoom: number = 13): L.Map {
     this.map = L.map(mapId,{
       zoomControl: false
@@ -57,7 +70,53 @@ export class MapService {
 
   resetMapView(): void {
     if (this.map) {
-      this.map.setView([2.927300, -75.281890], 13); // Usa aquí las coordenadas y zoom iniciales de tu app
+      this.map.setView([2.927300, -75.281890], 13);
     }
   }
+  
+  cargarParaderos(paraderos: any[], rutaGeoJSON: any) {
+    const rutaFeature = rutaGeoJSON.features[0];
+  
+    // Validamos que la geometría sea una línea
+    if (rutaFeature.geometry.type !== 'LineString') {
+      console.error('La ruta no es una LineString');
+      return;
+    }
+  
+    const linea = turf.lineString(rutaFeature.geometry.coordinates);
+  
+    // Filtramos los paraderos que estén cerca de la línea (ruta)
+    const paraderosCercanos = paraderos.filter((paradero) => {
+      const punto = turf.point(paradero.geometry.coordinates);
+      // Distancia máxima en grados (~100 metros, puedes ajustar)
+      const distanciaMaxima = 0.00010; 
+      const distancia = turf.pointToLineDistance(punto, linea, { units: 'degrees' });
+      return distancia <= distanciaMaxima;
+    });
+  
+    // Limpiar capa anterior si existe
+    if (this.paraderosLayer) {
+      this.map.removeLayer(this.paraderosLayer);
+    }
+  
+    // Mostrar los paraderos filtrados
+    this.paraderosLayer = L.geoJSON(paraderosCercanos, {
+      pointToLayer: (feature, latlng) => {
+        return L.marker(latlng, { icon: this.iconoParadero });
+      },
+      onEachFeature: (feature, layer) => {
+        if (feature.properties && feature.properties.nombre) {
+          layer.bindPopup(feature.properties.nombre);
+        }
+      }
+    }).addTo(this.map);
+  }
+
+  clearParaderos() {
+    if (this.paraderosLayer) {
+      this.map.removeLayer(this.paraderosLayer); // Remover los paraderos si existe la capa
+      this.paraderosLayer = null;
+    }
+  }
+
 }

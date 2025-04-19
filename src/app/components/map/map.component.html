@@ -11,7 +11,7 @@
   </button>
 
   <!-- Componente Filtro superpuesto -->
-  <div *ngIf="mostrarFiltro" class="position-absolute top-0 start-0 m-3 z-2 bg-white p-3 rounded shadow">
+  <div [hidden]="!mostrarFiltro" class="position-absolute top-0 start-0 m-3 z-2 bg-white p-3 rounded shadow">
     <app-filter (rutaSeleccionada)="addRuta($event)"></app-filter>
   </div>
 
