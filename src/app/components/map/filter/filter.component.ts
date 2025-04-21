@@ -81,6 +81,7 @@ export class FilterComponent {
     this.mapService.clearUserLocation();
     this.mapService.resetMapView();
     this.description = "";
+    this.mapService.clearParaderos();
   }
 }
 

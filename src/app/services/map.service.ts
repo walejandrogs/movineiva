@@ -10,9 +10,16 @@ import * as turf from '@turf/turf';
 export class MapService {
   iconoParadero = L.icon({
     iconUrl: 'assets/images/marker-icon.png',
-    //shadowUrl: 'assets/images/marker-shadow.png',
     iconSize: [15, 20],
     iconAnchor: [6, 20],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+
+  iconoUserLocation = L.icon({
+    iconUrl: 'assets/images/userLocation.png',
+    iconSize: [20, 25],
+    iconAnchor: [11, 25],
     popupAnchor: [1, -34],
     shadowSize: [41, 41]
   });
@@ -44,7 +51,7 @@ export class MapService {
         if (this.userMarker) {
           this.userMarker.setLatLng(coords);
         } else {
-          this.userMarker = L.marker(coords).addTo(this.map).bindPopup('Estás aquí.').openPopup();
+          this.userMarker = L.marker(coords, { icon: this.iconoUserLocation }).addTo(this.map).bindPopup('Estás aquí.').openPopup();
         }
 
         if (callback) callback(coords);
