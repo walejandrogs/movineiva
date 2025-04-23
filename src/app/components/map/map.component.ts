@@ -19,6 +19,8 @@ export class MapComponent implements OnInit {
   private rutaActual: L.GeoJSON | null = null;
   paraderos: any[] = [];
   rutaLayer: L.Layer | null = null;
+  barriosResaltados = L.featureGroup();
+
   @ViewChild(FilterComponent, { static: false }) filterComponent!: FilterComponent;
 
   mostrarFiltro = false;
@@ -38,6 +40,7 @@ export class MapComponent implements OnInit {
     // Inicializar el mapa desde el servicio
     this.mapService.initMap('map', [2.927300, -75.281890], 13);
     this.cargarParaderos();
+    this.barriosResaltados = L.featureGroup().addTo(this.mapService.getMap());
   }
 
   cargarParaderos(): void {
@@ -95,30 +98,57 @@ export class MapComponent implements OnInit {
     );
   }
 
-  // Función que recibe la ruta y la agrega al mapa
   mostrarRuta(geojsonData: any | null) {
-
     const map = this.mapService.getMap();
-
+  
     // Si hay una ruta actual, elimínala siempre
     if (this.rutaActual) {
       map.removeLayer(this.rutaActual);
       this.rutaActual = null;
     }
-
+  
     // Si hay una nueva ruta válida, agrégala
-    if (geojsonData && geojsonData.type === 'FeatureCollection') {
-      this.rutaActual = L.geoJSON(geojsonData).addTo(map);
-
-      // Centrar el mapa en la nueva ruta
-      const bounds = this.rutaActual.getBounds();
-      map.fitBounds(bounds);
-
-      
-    } else if (geojsonData) {
+    if (geojsonData && geojsonData.type === 'FeatureCollection' && Array.isArray(geojsonData.features)) {
+      if (geojsonData.features.length > 0) {
+        this.rutaActual = L.geoJSON(geojsonData).addTo(map);
+  
+        const bounds = this.rutaActual.getBounds();
+        if (bounds.isValid()) {
+          map.fitBounds(bounds);
+        } else {
+          console.error('La ruta no tiene una geometría válida para ajustar los límites del mapa');
+        }
+      } else {
+        console.error('El GeoJSON no contiene ningún feature válido');
+      }
+    } else {
       console.error('El objeto no es un GeoJSON válido');
     }
   }
   
+  resaltarBarrios(barrios: any[]) {
+    const map = this.mapService.getMap();
+  
+    // Limpia barrios anteriores
+    this.barriosResaltados.clearLayers();
+  
+    barrios.forEach(barrio => {
+      const barrioLayer = L.geoJSON(barrio, {
+        style: {
+          color: 'blue',
+          weight: 2,
+          fillOpacity: 0.3
+        }
+      });
+      barrioLayer.addTo(this.barriosResaltados);
+    });
+  
+    this.barriosResaltados.addTo(map);
+  
+    // Centra el mapa en los barrios resaltados
+    if (this.barriosResaltados.getLayers().length > 0) {
+      map.fitBounds(this.barriosResaltados.getBounds());
+    }
+  }
   
 }

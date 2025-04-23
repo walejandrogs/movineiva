@@ -6,6 +6,7 @@ import { RoutesService } from '../../../services/routes.service';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { NeighborhoodService } from '../../../services/neighborhood.service';
+import * as turf from '@turf/turf';
 
 @Component({
   selector: 'app-filter',
@@ -14,7 +15,12 @@ import { NeighborhoodService } from '../../../services/neighborhood.service';
   styleUrl: './filter.component.css'
 })
 export class FilterComponent {
+  @Output() rutaDesdeOrigenDestino = new EventEmitter<any>();
+  @Output() barriosSeleccionados = new EventEmitter<any[]>();
   @Output() rutaSeleccionada = new EventEmitter<string|null>();
+  @Output() rutaDetectada = new EventEmitter<any>();
+
+  
   deshabilitarRutas = false;
   deshabilitarOrigenDestino = false;
 
@@ -95,6 +101,79 @@ export class FilterComponent {
       .sort();
   }
 
+
+  onSeleccionOrigenDestino() {
+    const barrioOrigen = this.barrios.find(b => b.properties.NOM_BARRIO === this.barrioSeleccionadoInicio);
+    const barrioDestino = this.barrios.find(b => b.properties.NOM_BARRIO === this.barrioSeleccionadoDestino);
+  
+    if (!barrioOrigen || !barrioDestino) {
+      console.error('Uno de los barrios no se encuentra');
+      return;
+    }
+  
+    // Verificación de selección
+    console.log('[FilterComponent] Barrio origen:', barrioOrigen.properties.NOM_BARRIO);
+    console.log('[FilterComponent] Barrio destino:', barrioDestino.properties.NOM_BARRIO);
+  
+    this.routesService.cargarTodasLasRutas().subscribe(rutas => {
+      rutas.forEach(r => {
+        this.routesService.cargarRuta(r.archivo).subscribe(rutaGeoJSON => {
+          // Convertir las rutas y los barrios en geometrías
+          const rutaLinea = turf.lineString(rutaGeoJSON.features[0].geometry.coordinates);
+  
+          // Convertir barrios en polígonos
+          let origenPoly;
+          let destinoPoly;
+  
+          // Verificar si es un MultiPolygon o Polygon
+          if (barrioOrigen.geometry.type === 'MultiPolygon') {
+            origenPoly = turf.multiPolygon(barrioOrigen.geometry.coordinates);
+          } else {
+            origenPoly = turf.polygon(barrioOrigen.geometry.coordinates);
+          }
+  
+          if (barrioDestino.geometry.type === 'MultiPolygon') {
+            destinoPoly = turf.multiPolygon(barrioDestino.geometry.coordinates);
+          } else {
+            destinoPoly = turf.polygon(barrioDestino.geometry.coordinates);
+          }
+  
+          // Obtener el centroide de los barrios
+          const centroOrigen = turf.centerOfMass(origenPoly);
+          const centroDestino = turf.centerOfMass(destinoPoly);
+  
+          // Calcular la distancia entre la ruta y el centro de los barrios
+          const distanciaOrigen = turf.pointToLineDistance(centroOrigen, rutaLinea, { units: 'meters' });
+          const distanciaDestino = turf.pointToLineDistance(centroDestino, rutaLinea, { units: 'meters' });
+  
+          // Verificar si la distancia es menor a 100 metros
+          const estaCercaOrigen = distanciaOrigen <= 100;
+          const estaCercaDestino = distanciaDestino <= 100;
+  
+          // Verificación de proximidad
+          console.log('Distancia a Barrio Origen:', distanciaOrigen);
+          console.log('Distancia a Barrio Destino:', distanciaDestino);
+          console.log('¿Está cerca del barrio origen?', estaCercaOrigen);
+          console.log('¿Está cerca del barrio destino?', estaCercaDestino);
+  
+          if (estaCercaOrigen && estaCercaDestino) {
+            console.log('[FilterComponent] Ruta cercana a ambos barrios');
+            this.rutaSeleccionada.emit(r.archivo); // Emitir el nombre del archivo de la ruta
+            this.barriosSeleccionados.emit([barrioOrigen, barrioDestino]); // Resalta los barrios
+          }
+        });
+      });
+    });
+}
+
+  verificarSeleccion() {
+    console.log('[FilterComponent] Verificando selección...');
+    if (this.barrioSeleccionadoInicio && this.barrioSeleccionadoDestino) {
+      console.log('[FilterComponent] Ambos barrios seleccionados');
+      this.onSeleccionOrigenDestino();
+    }
+  }
+
   limpiarFiltros() {
     this.comunaSeleccionadaInicio = null;
     this.barrioSeleccionadoInicio  = null;
@@ -109,5 +188,9 @@ export class FilterComponent {
     this.description = "";
     this.mapService.clearParaderos();
   }
+
+
+
+
 }
 

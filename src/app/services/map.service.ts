@@ -27,6 +27,7 @@ export class MapService {
   private userMarker: L.Marker | null = null;
   private paraderosLayer: L.LayerGroup | null = null;
   constructor(private http: HttpClient) {}
+  barriosLayer: L.GeoJSON<any> | null = null;
   // 👇 Define un icono personalizado
   
   initMap(mapId: string, coords: [number, number], zoom: number = 13): L.Map {
@@ -124,6 +125,23 @@ export class MapService {
       this.map.removeLayer(this.paraderosLayer); // Remover los paraderos si existe la capa
       this.paraderosLayer = null;
     }
+  }
+
+  resaltarBarrios(barrios: any[]) {
+    // Limpia las capas anteriores (si hay alguna)
+    if (this.barriosLayer) {
+      this.map.removeLayer(this.barriosLayer);
+    }
+  
+    // Crear una nueva capa de barrios resaltados
+    this.barriosLayer = L.geoJSON(barrios, {
+      style: () => ({
+        color: 'green',
+        weight: 3,
+        opacity: 0.7,
+        fillOpacity: 0.3
+      })
+    }).addTo(this.map);
   }
 
 }
