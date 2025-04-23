@@ -7,26 +7,46 @@
       </button>
       <h5 class="text-dark">Inicio</h5>
       <div class="d-flex align-items-center gap-2">
-        <select class="form-select form-select-sm w-auto" [(ngModel)]="origenSeleccionado" (change)="onSeleccionOrigenDestino()" [disabled]="deshabilitarOrigenDestino">
-          <option selected disabled>Seleccione un punto de inicio</option>
-          <option *ngFor="let lugar of lugaresInicio" [value]="lugar">{{ lugar }}</option>
+        <!-- COMUNA -->
+        <h6>Comuna</h6>
+        <select  class="form-select" [(ngModel)]="comunaSeleccionadaInicio" (change)="onComunaSeleccionadaInicio()">
+          <option disabled selected>Seleccione una comuna</option>
+          <option *ngFor="let comuna of comunas" [value]="comuna">{{ comuna }}</option>
         </select>
+
+        <!-- BARRIO -->
+        <h6>Barrio</h6>
+          <select  class="form-select" [(ngModel)]="barrioSeleccionadoInicio">
+            <option disabled selected>Seleccione un barrio</option>
+            <option *ngFor="let barrio of barriosFiltradosInicio" [value]="barrio">{{ barrio }}</option>
+          </select>
       </div>
     </div>
   
     <!-- Sección Destino -->
     <div class="mb-3">
       <h5 class="text-dark">Destino</h5>
-      <select class="form-select form-select-sm" [(ngModel)]="destinoSeleccionado" (change)="onSeleccionOrigenDestino()" [disabled]="deshabilitarOrigenDestino">
-        <option selected disabled>Seleccione un destino</option>
-        <option *ngFor="let lugar of lugaresDestino" [value]="lugar">{{ lugar }}</option>
-      </select>
+      <div class="d-flex align-items-center gap-2">
+        <!-- COMUNA -->
+        <h6>Comuna</h6>
+        <select  class="form-select" [(ngModel)]="comunaSeleccionadaDestino" (change)="onComunaSeleccionadaDestino()">
+          <option disabled selected>Seleccione una comuna</option>
+          <option *ngFor="let comuna of comunas" [value]="comuna">{{ comuna }}</option>
+        </select>
+
+        <!-- BARRIO -->
+        <h6>Barrio</h6>
+        <select  class="form-select" [(ngModel)]="barrioSeleccionadoDestino">
+          <option disabled selected>Seleccione un barrio</option>
+          <option *ngFor="let barrio of barriosFiltradosDestino" [value]="barrio">{{ barrio }}</option>
+        </select>
+      </div>
     </div>
   
     <!-- Sección Rutas -->
     <div>
       <h5 class="text-dark" >Rutas</h5>
-      <select class="form-select form-select-sm" [(ngModel)]="rutaSeleccionadaArchivo" (change)="onSeleccionRuta($event)" [disabled]="deshabilitarRutas">
+      <select  class="form-select form-select-sm" [(ngModel)]="rutaSeleccionadaArchivo" (change)="onSeleccionRuta($event)" [disabled]="deshabilitarRutas">
         <option selected disabled>Seleccione una ruta</option>
         <option *ngFor="let ruta of rutas">{{ ruta.nombre }}</option>
       </select>

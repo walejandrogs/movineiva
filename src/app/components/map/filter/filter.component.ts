@@ -5,6 +5,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { RoutesService } from '../../../services/routes.service';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { NeighborhoodService } from '../../../services/neighborhood.service';
 
 @Component({
   selector: 'app-filter',
@@ -17,21 +18,31 @@ export class FilterComponent {
   deshabilitarRutas = false;
   deshabilitarOrigenDestino = false;
 
-  origenSeleccionado: string | null = null;
-  destinoSeleccionado: string | null = null;
   rutaSeleccionadaArchivo: string | null = null;
   description: string = '';
+  comunas: number[] = [];
+  barrios: any[] = [];
+  barriosFiltradosInicio: string[] = [];
+  barriosFiltradosDestino: string[] = [];
+  comunaSeleccionadaInicio: number | null = null;
+  barrioSeleccionadoInicio: string | null = null;
+  comunaSeleccionadaDestino: number | null = null;
+  barrioSeleccionadoDestino: string | null = null;
   
-  lugaresInicio = ['Punto A', 'Punto B'];
-  lugaresDestino = ['Punto X', 'Punto Y'];
 
   rutas: { nombre: string, archivo: string }[] = [];
 
-  constructor(private mapService: MapService, private routesService: RoutesService) {}
+  constructor(private mapService: MapService, private routesService: RoutesService, private neighborhoodService : NeighborhoodService) {}
 
   ngOnInit(): void {
     this.routesService.cargarTodasLasRutas().subscribe(rutas => {
       this.rutas = rutas;
+    });
+
+    this.neighborhoodService.cargarBarrios().subscribe(data => {
+      this.barrios = data.features;
+      const comunasSet = new Set(this.barrios.map(b => b.properties.NO__COMUNA));
+      this.comunas = Array.from(comunasSet).sort(function(a,b){return a-b}); 
     });
   }
 
@@ -58,22 +69,37 @@ export class FilterComponent {
     });
   }
 
-  onSeleccionOrigenDestino() {
-    if (this.origenSeleccionado || this.destinoSeleccionado) {
-      this.deshabilitarRutas = true;
+  //onSeleccionOrigenDestino() {
+    //if (this.origenSeleccionado || this.destinoSeleccionado) {
+      //this.deshabilitarRutas = true;
       // Aquí podrías emitir algún evento si planeas usar estos valores
-    }
-  }
+    //}
+  //}
 
   // Función para actualizar la descripción
   addDescription(description: string) {
     this.description = description; // Guardar la descripción recibida
   }
   
+  onComunaSeleccionadaInicio(): void {
+    this.barriosFiltradosInicio = this.barrios
+      .filter(b => b.properties.NO__COMUNA == this.comunaSeleccionadaInicio)
+      .map(b => b.properties.NOM_BARRIO)
+      .sort();
+  }
+
+  onComunaSeleccionadaDestino(): void {
+    this.barriosFiltradosDestino = this.barrios
+      .filter(b => b.properties.NO__COMUNA == this.comunaSeleccionadaDestino)
+      .map(b => b.properties.NOM_BARRIO)
+      .sort();
+  }
 
   limpiarFiltros() {
-    this.origenSeleccionado = null;
-    this.destinoSeleccionado = null;
+    this.comunaSeleccionadaInicio = null;
+    this.barrioSeleccionadoInicio  = null;
+    this.comunaSeleccionadaDestino = null;
+    this.barrioSeleccionadoDestino  = null;
     this.deshabilitarOrigenDestino = false;
     this.deshabilitarRutas = false;
     this.rutaSeleccionadaArchivo = '';
