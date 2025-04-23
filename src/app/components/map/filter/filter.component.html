@@ -7,7 +7,7 @@
   <div class="row gy-3">
     <!-- COMUNA -->
     <div class="col-12 col-md-4">
-      <label for="comunaInicio" class="form-label">Comuna</label>
+      <label for="comunaInicio" class="form-label text-dark">Comuna</label>
       <select id="comunaInicio" class="form-select form-select-sm" [(ngModel)]="comunaSeleccionadaInicio" (change)="onComunaSeleccionadaInicio()">
         <option disabled selected>Seleccione una comuna</option>
         <option *ngFor="let comuna of comunas" [value]="comuna">{{ comuna }}</option>
@@ -16,7 +16,7 @@
 
     <!-- BARRIO -->
     <div class="col-12 col-md-8">
-      <label for="barrioInicio" class="form-label">Barrio</label>
+      <label for="barrioInicio" class="form-labe text-dark">Barrio</label>
       <!-- Barrio de Inicio -->
       <select class="form-select form-select-sm"
       [(ngModel)]="barrioSeleccionadoInicio"
@@ -34,7 +34,7 @@
   <div class="row gy-3">
     <!-- COMUNA -->
     <div class="col-12 col-md-4">
-      <label for="comunaDestino" class="form-label">Comuna</label>
+      <label for="comunaDestino" class="form-label text-dark">Comuna</label>
       <select id="comunaDestino" class="form-select form-select-sm" [(ngModel)]="comunaSeleccionadaDestino" (change)="onComunaSeleccionadaDestino()">
         <option disabled selected>Seleccione una comuna</option>
         <option *ngFor="let comuna of comunas" [value]="comuna">{{ comuna }}</option>
@@ -43,7 +43,7 @@
 
     <!-- BARRIO -->
     <div class="col-12 col-md-8">
-      <label for="barrioDestino" class="form-label">Barrio</label>
+      <label for="barrioDestino" class="form-label text-dark">Barrio</label>
       <!-- Barrio de Destino -->
       <select class="form-select form-select-sm"
       [(ngModel)]="barrioSeleccionadoDestino"
@@ -62,7 +62,7 @@
   <div class="row gy-2">
     <!-- Selector de rutas -->
     <div class="col-12">
-      <h6 class="mb-1">Ruta disponible</h6>
+      <h6 class="mb-1 text-dark">Ruta disponible</h6>
       <select class="form-select form-select-sm" [(ngModel)]="rutaSeleccionadaArchivo" (change)="onSeleccionRuta($event)" [disabled]="deshabilitarRutas">
         <option selected disabled>Seleccione una ruta</option>
         <option *ngFor="let ruta of rutas">{{ ruta.nombre }}</option>
@@ -71,7 +71,7 @@
 
     <!-- Descripción -->
     <div class="col-12">
-      <h6 class="mb-1">Descripción</h6>
+      <h6 class="mb-1 text-dark">Descripción</h6>
       <textarea class="form-control form-control-sm" rows="4" [value]="description" disabled></textarea>
     </div>
 

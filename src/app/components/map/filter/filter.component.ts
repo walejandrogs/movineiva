@@ -8,6 +8,24 @@ import { FormsModule } from '@angular/forms';
 import { NeighborhoodService } from '../../../services/neighborhood.service';
 import * as turf from '@turf/turf';
 
+type Position = [number, number];
+
+interface PointGeometry {
+  type: 'Point';
+  coordinates: Position;
+}
+
+interface LineStringGeometry {
+  type: 'LineString';
+  coordinates: Position[];
+}
+
+interface Feature<T> {
+  type: 'Feature';
+  geometry: T;
+  properties: any;
+}
+
 @Component({
   selector: 'app-filter',
   imports: [CommonModule,HttpClientModule,FormsModule],
@@ -20,6 +38,7 @@ export class FilterComponent {
   @Output() rutaSeleccionada = new EventEmitter<string|null>();
   @Output() rutaDetectada = new EventEmitter<any>();
 
+  
   
   deshabilitarRutas = false;
   deshabilitarOrigenDestino = false;
@@ -111,61 +130,67 @@ export class FilterComponent {
       return;
     }
   
-    // Verificación de selección
     console.log('[FilterComponent] Barrio origen:', barrioOrigen.properties.NOM_BARRIO);
     console.log('[FilterComponent] Barrio destino:', barrioDestino.properties.NOM_BARRIO);
   
     this.routesService.cargarTodasLasRutas().subscribe(rutas => {
       rutas.forEach(r => {
         this.routesService.cargarRuta(r.archivo).subscribe(rutaGeoJSON => {
-          // Convertir las rutas y los barrios en geometrías
           const rutaLinea = turf.lineString(rutaGeoJSON.features[0].geometry.coordinates);
   
-          // Convertir barrios en polígonos
-          let origenPoly;
-          let destinoPoly;
+          const origenPoly = barrioOrigen.geometry.type === 'MultiPolygon'
+            ? turf.multiPolygon(barrioOrigen.geometry.coordinates)
+            : turf.polygon(barrioOrigen.geometry.coordinates);
   
-          // Verificar si es un MultiPolygon o Polygon
-          if (barrioOrigen.geometry.type === 'MultiPolygon') {
-            origenPoly = turf.multiPolygon(barrioOrigen.geometry.coordinates);
-          } else {
-            origenPoly = turf.polygon(barrioOrigen.geometry.coordinates);
-          }
+          const destinoPoly = barrioDestino.geometry.type === 'MultiPolygon'
+            ? turf.multiPolygon(barrioDestino.geometry.coordinates)
+            : turf.polygon(barrioDestino.geometry.coordinates);
   
-          if (barrioDestino.geometry.type === 'MultiPolygon') {
-            destinoPoly = turf.multiPolygon(barrioDestino.geometry.coordinates);
-          } else {
-            destinoPoly = turf.polygon(barrioDestino.geometry.coordinates);
-          }
-  
-          // Obtener el centroide de los barrios
           const centroOrigen = turf.centerOfMass(origenPoly);
           const centroDestino = turf.centerOfMass(destinoPoly);
   
-          // Calcular la distancia entre la ruta y el centro de los barrios
           const distanciaOrigen = turf.pointToLineDistance(centroOrigen, rutaLinea, { units: 'meters' });
           const distanciaDestino = turf.pointToLineDistance(centroDestino, rutaLinea, { units: 'meters' });
   
-          // Verificar si la distancia es menor a 100 metros
-          const estaCercaOrigen = distanciaOrigen <= 100;
-          const estaCercaDestino = distanciaDestino <= 100;
+          const estaCercaOrigen = distanciaOrigen <= 1000;
+          const estaCercaDestino = distanciaDestino <= 1000;
   
-          // Verificación de proximidad
-          console.log('Distancia a Barrio Origen:', distanciaOrigen);
-          console.log('Distancia a Barrio Destino:', distanciaDestino);
-          console.log('¿Está cerca del barrio origen?', estaCercaOrigen);
-          console.log('¿Está cerca del barrio destino?', estaCercaDestino);
+          // 👉 Validar también la orientación
+          const indexInicio = this.puntoMasCercano(rutaLinea, centroOrigen);
+          const indexDestino = this.puntoMasCercano(rutaLinea, centroDestino);
   
-          if (estaCercaOrigen && estaCercaDestino) {
-            console.log('[FilterComponent] Ruta cercana a ambos barrios');
-            this.rutaSeleccionada.emit(r.archivo); // Emitir el nombre del archivo de la ruta
-            this.barriosSeleccionados.emit([barrioOrigen, barrioDestino]); // Resalta los barrios
+          console.log('Índice del inicio en la ruta:', indexInicio);
+          console.log('Índice del destino en la ruta:', indexDestino);
+  
+          const orientacionCorrecta = indexInicio > indexDestino;
+  
+          if (estaCercaOrigen && estaCercaDestino && orientacionCorrecta) {
+            console.log('[FilterComponent] Ruta cercana y con orientación válida');
+            this.rutaSeleccionada.emit(r.archivo);
+            this.barriosSeleccionados.emit([barrioOrigen, barrioDestino]);
           }
         });
       });
     });
-}
-
+  }
+  
+  private puntoMasCercano(linea: any, punto: any): number {
+    let menorDist = Infinity;
+    let indexMasCercano = -1;
+    const coords = linea.geometry.coordinates;
+  
+    coords.forEach((coord: any, index: number) => {
+      const puntoLinea = turf.point(coord);
+      const dist = turf.distance(punto, puntoLinea, { units: 'meters' });
+      if (dist < menorDist) {
+        menorDist = dist;
+        indexMasCercano = index;
+      }
+    });
+  
+    return indexMasCercano;
+  }
+  
   verificarSeleccion() {
     console.log('[FilterComponent] Verificando selección...');
     if (this.barrioSeleccionadoInicio && this.barrioSeleccionadoDestino) {
