@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import * as L from 'leaflet';
 import { FilterComponent } from './filter/filter.component';
 import { CommonModule } from '@angular/common';
@@ -20,6 +20,14 @@ export class MapComponent implements OnInit {
   paraderos: any[] = [];
   rutaLayer: L.Layer | null = null;
   barriosResaltados = L.featureGroup();
+  private _rutaSeleccionada: string | null = null;
+
+  @Input() set rutaSeleccionada(value: string | null) {
+    if (value !== this._rutaSeleccionada) {
+      this._rutaSeleccionada = value;
+      this.addRuta(value);
+    }
+  }
 
   @ViewChild(FilterComponent, { static: false }) filterComponent!: FilterComponent;
 
@@ -132,16 +140,34 @@ export class MapComponent implements OnInit {
     // Limpia barrios anteriores
     this.barriosResaltados.clearLayers();
   
-    barrios.forEach(barrio => {
-      const barrioLayer = L.geoJSON(barrio, {
-        style: {
-          color: 'blue',
-          weight: 2,
-          fillOpacity: 0.3
-        }
-      });
-      barrioLayer.addTo(this.barriosResaltados);
-    });
+    // Define estilos para origen y destino
+    const estiloOrigen = {
+      color: 'green',
+      fillColor: 'green',
+      fillOpacity: 0.3,
+      weight: 2
+    };
+  
+    const estiloDestino = {
+      color: 'red',
+      fillColor: 'red',
+      fillOpacity: 0.3,
+      weight: 2
+    };
+  
+    // Suponiendo que barrios[0] es el origen y barrios[1] es el destino
+    if (barrios.length > 0) {
+      const barrioOrigen = barrios[0];
+      const barrioDestino = barrios[1];
+  
+      // Resalta el barrio de origen con verde
+      const barrioLayerOrigen = L.geoJSON(barrioOrigen, { style: estiloOrigen });
+      barrioLayerOrigen.addTo(this.barriosResaltados);
+  
+      // Resalta el barrio de destino con rojo
+      const barrioLayerDestino = L.geoJSON(barrioDestino, { style: estiloDestino });
+      barrioLayerDestino.addTo(this.barriosResaltados);
+    }
   
     this.barriosResaltados.addTo(map);
   

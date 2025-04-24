@@ -37,9 +37,7 @@ export class FilterComponent {
   @Output() barriosSeleccionados = new EventEmitter<any[]>();
   @Output() rutaSeleccionada = new EventEmitter<string|null>();
   @Output() rutaDetectada = new EventEmitter<any>();
-
-  
-  
+  @Output() nombreRutaSeleccionada = new EventEmitter<string>();
   deshabilitarRutas = false;
   deshabilitarOrigenDestino = false;
 
@@ -53,6 +51,7 @@ export class FilterComponent {
   barrioSeleccionadoInicio: string | null = null;
   comunaSeleccionadaDestino: number | null = null;
   barrioSeleccionadoDestino: string | null = null;
+  rutaSeleccionadaDesdeFiltro: string | null = null;
   
 
   rutas: { nombre: string, archivo: string }[] = [];
@@ -168,6 +167,7 @@ export class FilterComponent {
             console.log('[FilterComponent] Ruta cercana y con orientación válida');
             this.rutaSeleccionada.emit(r.archivo);
             this.barriosSeleccionados.emit([barrioOrigen, barrioDestino]);
+            this.actualizarComboRuta(r.nombre);
           }
         });
       });
@@ -198,6 +198,10 @@ export class FilterComponent {
       this.onSeleccionOrigenDestino();
     }
   }
+  
+  actualizarComboRuta(nombre: string) {
+    this.rutaSeleccionadaArchivo = nombre;
+  }
 
   limpiarFiltros() {
     this.comunaSeleccionadaInicio = null;
@@ -212,6 +216,7 @@ export class FilterComponent {
     this.mapService.resetMapView();
     this.description = "";
     this.mapService.clearParaderos();
+    this.mapService.clearMapLayers();
   }
 
 

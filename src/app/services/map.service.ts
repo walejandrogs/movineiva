@@ -144,4 +144,13 @@ export class MapService {
     }).addTo(this.map);
   }
 
+  clearMapLayers() {
+    this.map.eachLayer((layer: L.Layer) => {
+      // Evitar eliminar la capa base del mapa (como la capa de tiles)
+      if (!(layer instanceof L.TileLayer)) {
+        this.map.removeLayer(layer);
+      }
+    });
+  }
+
 }
