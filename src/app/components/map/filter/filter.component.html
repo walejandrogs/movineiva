@@ -22,7 +22,7 @@
       [(ngModel)]="barrioSeleccionadoInicio"
       (change)="verificarSeleccion()">
       <option disabled selected>Seleccione un barrio</option>
-      <option *ngFor="let barrio of barriosFiltradosInicio" [value]="barrio">{{ barrio }}</option>
+      <option *ngFor="let barrio of barriosFiltradosInicio" [value]="barrio">{{ barrio | uppercase }}</option>
       </select>
     </div>
   </div>
@@ -49,7 +49,7 @@
       [(ngModel)]="barrioSeleccionadoDestino"
       (change)="verificarSeleccion()">
       <option disabled selected>Seleccione un barrio</option>
-      <option *ngFor="let barrio of barriosFiltradosDestino" [value]="barrio">{{ barrio }}</option>
+      <option *ngFor="let barrio of barriosFiltradosDestino" [value]="barrio">{{ barrio | uppercase }}</option>
       </select>
     </div>
   </div>
@@ -65,7 +65,7 @@
       <h6 class="mb-1 text-dark">Ruta disponible</h6>
       <select class="form-select form-select-sm" [(ngModel)]="rutaSeleccionadaArchivo" (change)="onSeleccionRuta($event)" [disabled]="deshabilitarRutas">
         <option selected disabled>Seleccione una ruta</option>
-        <option *ngFor="let ruta of rutas">{{ ruta.nombre }}</option>
+        <option *ngFor="let ruta of rutas">{{ ruta.nombre | uppercase }}</option>
       </select>
     </div>
 
