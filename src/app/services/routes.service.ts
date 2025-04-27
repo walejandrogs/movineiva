@@ -10,8 +10,10 @@ export class RoutesService {
   constructor(private http: HttpClient) {}
 
   private rutas = [
-    { nombre: 'Ruta 106 - Ida', archivo: 'ruta106Ida.geojson' },
-    { nombre: 'Ruta 106 - Regreso', archivo: 'ruta106Regreso.geojson' },
+    { nombre: 'Ruta 106 - Antigua ruta 20 - Ida', archivo: 'ruta106Ida.geojson' },
+    { nombre: 'Ruta 106 - Antigua ruta 20 - Regreso', archivo: 'ruta106Regreso.geojson' },
+    { nombre: 'Ruta 936 - Antigua ruta 19 - Ida', archivo: 'ruta936Ida.geojson' },
+    { nombre: 'Ruta 936 - Antigua ruta 19 - Regreso', archivo: 'ruta936Regreso.geojson' },
     // etc.
   ];
   

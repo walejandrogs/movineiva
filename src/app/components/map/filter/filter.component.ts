@@ -173,6 +173,8 @@ export class FilterComponent {
   
           const estaCercaOrigen = distanciaOrigen <= 1000;
           const estaCercaDestino = distanciaDestino <= 1000;
+          console.log(estaCercaOrigen)
+          console.log(estaCercaDestino)
   
           // 👉 Validar también la orientación
           const indexInicio = this.puntoMasCercano(rutaLinea, centroOrigen);
@@ -182,16 +184,22 @@ export class FilterComponent {
           console.log('Índice del destino en la ruta:', indexDestino);
   
           const orientacionCorrecta = indexInicio > indexDestino;
-  
+          console.log("Antes"+estaCercaOrigen)
+          console.log(estaCercaDestino)
+          console.log(orientacionCorrecta)
           if (estaCercaOrigen && estaCercaDestino && orientacionCorrecta) {
+            console.log("Despues"+estaCercaOrigen)
+            console.log(estaCercaDestino)
+            console.log(orientacionCorrecta)
             console.log('[FilterComponent] Ruta cercana y con orientación válida');
             this.rutaSeleccionada.emit(r.archivo);
             this.barriosSeleccionados.emit([barrioOrigen, barrioDestino]);
             this.actualizarComboRuta(r.nombre);
+            return
           }
           else {
             console.log("No hay ruta")
-            alert("No hay ruta")
+            
           }
         });
       });
