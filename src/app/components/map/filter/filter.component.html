@@ -8,7 +8,8 @@
     <!-- COMUNA -->
     <div class="col-12 col-md-4">
       <label for="comunaInicio" class="form-label text-dark">Comuna</label>
-      <select id="comunaInicio" class="form-select form-select-sm" [(ngModel)]="comunaSeleccionadaInicio" (change)="onComunaSeleccionadaInicio()">
+      <!-- Combo de Comunas -->
+      <select class="form-select form-select-sm" [(ngModel)]="comunaSeleccionadaInicio" (change)="onComunaSeleccionadaInicio()">
         <option disabled selected>Seleccione una comuna</option>
         <option *ngFor="let comuna of comunas" [value]="comuna">{{ comuna }}</option>
       </select>
@@ -17,13 +18,15 @@
     <!-- BARRIO -->
     <div class="col-12 col-md-8">
       <label for="barrioInicio" class="form-label text-dark">Barrio</label>
-      <!-- Barrio de Inicio -->
-      <select class="form-select form-select-sm"
-      [(ngModel)]="barrioSeleccionadoInicio"
-      (change)="verificarSeleccion()">
-      <option disabled selected>Seleccione un barrio</option>
-      <option *ngFor="let barrio of barriosFiltradosInicio" [value]="barrio">{{ barrio | uppercase }}</option>
-      </select>
+      <!-- ng-select para seleccionar barrio -->
+      <ng-select
+        class="form-select form-select-sm bg-dark text-light  ng-select-dark "
+        [items]="barriosFiltradosInicio"
+        placeholder="Seleccione un barrio"
+        [(ngModel)]="barrioSeleccionadoInicio"
+        (change)="verificarSeleccion()"
+        [searchable]="true">
+      </ng-select>
     </div>
   </div>
 </div>
@@ -45,12 +48,14 @@
     <div class="col-12 col-md-8">
       <label for="barrioDestino" class="form-label text-dark">Barrio</label>
       <!-- Barrio de Destino -->
-      <select class="form-select form-select-sm"
-      [(ngModel)]="barrioSeleccionadoDestino"
-      (change)="verificarSeleccion()">
-      <option disabled selected>Seleccione un barrio</option>
-      <option *ngFor="let barrio of barriosFiltradosDestino" [value]="barrio">{{ barrio | uppercase }}</option>
-      </select>
+      <ng-select
+        class="form-select form-select-sm bg-dark text-light  ng-select-dark "
+        [items]="barriosFiltradosDestino"
+        placeholder="Seleccione un barrio"
+        [(ngModel)]="barrioSeleccionadoDestino"
+        (change)="verificarSeleccion()"
+        [searchable]="true">
+      </ng-select>
     </div>
   </div>
 </div>
@@ -65,7 +70,7 @@
       <h6 class="mb-1 text-dark">Ruta disponible</h6>
       <select class="form-select form-select-sm" [(ngModel)]="rutaSeleccionadaArchivo" (change)="onSeleccionRuta($event)" [disabled]="deshabilitarRutas">
         <option selected disabled>Seleccione una ruta</option>
-        <option *ngFor="let ruta of rutas">{{ ruta.nombre | uppercase }}</option>
+        <option *ngFor="let ruta of rutas">{{ ruta.nombre }}</option>
       </select>
     </div>
 

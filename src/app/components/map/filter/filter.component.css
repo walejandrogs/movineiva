@@ -1,0 +1,12 @@
+/* Estilo para el panel de opciones */
+:host ::ng-deep ng-select .ng-select-panel {
+    background-color: #000000; /* Fondo oscuro */
+    color: white; /* Texto en blanco */
+    
+  }
+  
+/* Estilo para las opciones del select */
+:host ::ng-deep ng-select .ng-option {
+    background-color: #000000; /* Fondo oscuro para las opciones */
+    color: white; /* Texto blanco */
+}

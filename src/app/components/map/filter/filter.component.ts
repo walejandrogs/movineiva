@@ -7,6 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { NeighborhoodService } from '../../../services/neighborhood.service';
 import * as turf from '@turf/turf';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 type Position = [number, number];
 
@@ -28,7 +29,7 @@ interface Feature<T> {
 
 @Component({
   selector: 'app-filter',
-  imports: [CommonModule,HttpClientModule,FormsModule],
+  imports: [CommonModule,HttpClientModule,FormsModule,NgSelectModule],
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.css'
 })
@@ -45,12 +46,12 @@ export class FilterComponent {
   description: string = '';
   comunas: number[] = [];
   barrios: any[] = [];
-  barriosFiltradosInicio: string[] = [];
-  barriosFiltradosDestino: string[] = [];
+  barriosFiltradosInicio: { label: string; value: string }[] = [];
+  barriosFiltradosDestino: { label: string; value: string }[] = [];
   comunaSeleccionadaInicio: number | null = null;
-  barrioSeleccionadoInicio: string | null = null;
+  barrioSeleccionadoInicio: { label: string, value: string } | null = null;
   comunaSeleccionadaDestino: number | null = null;
-  barrioSeleccionadoDestino: string | null = null;
+  barrioSeleccionadoDestino: { label: string, value: string } | null = null;
   rutaSeleccionadaDesdeFiltro: string | null = null;
   
 
@@ -66,64 +67,59 @@ export class FilterComponent {
     this.neighborhoodService.cargarBarrios().subscribe(data => {
       this.barrios = data.features;
       const comunasSet = new Set(this.barrios.map(b => b.properties.NO__COMUNA));
-      this.comunas = Array.from(comunasSet).sort(function(a,b){return a-b}); 
+      this.comunas = Array.from(comunasSet).sort((a, b) => a - b);
+      
+      this.onComunaSeleccionadaInicio();
+      this.onComunaSeleccionadaDestino();
     });
   }
 
-  onSeleccionRuta(event: Event) {
-    const index = (event.target as HTMLSelectElement).selectedIndex - 1;
-    const ruta = this.rutas[index];
-    if (ruta && ruta.archivo) {
-      this.deshabilitarOrigenDestino = true;
-      this.rutaSeleccionada.emit(ruta.archivo); // emitimos el nombre del archivo
+  onComunaSeleccionadaInicio(): void {
+    if (!this.comunaSeleccionadaInicio) {
+      this.barriosFiltradosInicio = this.barrios
+        .map(b => ({
+          label: (b.properties.NOM_BARRIO ?? 'Barrio desconocido').toUpperCase(),
+          value: (b.properties.NOM_BARRIO ?? 'Barrio desconocido').toUpperCase()
+        }))
+        .sort((a, b) => (a.label || '').localeCompare(b.label || ''));
     } else {
-      console.error('Ruta no válida');
+      this.barriosFiltradosInicio = this.barrios
+        .filter(b => b.properties.NO__COMUNA == this.comunaSeleccionadaInicio)
+        .map(b => ({
+          label: (b.properties.NOM_BARRIO ?? 'Barrio desconocido'),
+          value: (b.properties.NOM_BARRIO ?? 'Barrio desconocido')
+        }))
+        .sort((a, b) => (a.label || '').localeCompare(b.label || ''));
     }
   }
 
-  useMyLocation() {
-    this.mapService.getUserLocation((coords) => {
-      console.log('Ubicación desde filtro:', coords);
-    });
-  }
-
-  onRutaChange(archivo: string) {
-    this.routesService.cargarRuta(archivo).subscribe(ruta => {
-      this.rutaSeleccionada.emit(ruta);
-    });
-  }
-
-  //onSeleccionOrigenDestino() {
-    //if (this.origenSeleccionado || this.destinoSeleccionado) {
-      //this.deshabilitarRutas = true;
-      // Aquí podrías emitir algún evento si planeas usar estos valores
-    //}
-  //}
-
-  // Función para actualizar la descripción
-  addDescription(description: string) {
-    this.description = description; // Guardar la descripción recibida
-  }
-  
-  onComunaSeleccionadaInicio(): void {
-    this.barriosFiltradosInicio = this.barrios
-      .filter(b => b.properties.NO__COMUNA == this.comunaSeleccionadaInicio)
-      .map(b => b.properties.NOM_BARRIO)
-      .sort();
-  }
 
   onComunaSeleccionadaDestino(): void {
-    this.barriosFiltradosDestino = this.barrios
-      .filter(b => b.properties.NO__COMUNA == this.comunaSeleccionadaDestino)
-      .map(b => b.properties.NOM_BARRIO)
-      .sort();
+    if (!this.comunaSeleccionadaDestino) {
+      this.barriosFiltradosDestino = this.barrios
+        .map(b => ({
+          label: (b.properties.NOM_BARRIO ?? 'Barrio desconocido').toUpperCase(),
+          value: (b.properties.NOM_BARRIO ?? 'Barrio desconocido')
+        }))
+        .sort((a, b) => (a.label || '').localeCompare(b.label || ''));
+    } else {
+      this.barriosFiltradosDestino = this.barrios
+        .filter(b => b.properties.NO__COMUNA == this.comunaSeleccionadaDestino)
+        .map(b => ({
+          label: (b.properties.NOM_BARRIO ?? 'Barrio desconocido').toUpperCase(),
+          value: (b.properties.NOM_BARRIO ?? 'Barrio desconocido')
+        }))
+        .sort((a, b) => (a.label || '').localeCompare(b.label || ''));
+    }
   }
 
 
   onSeleccionOrigenDestino() {
-    const barrioOrigen = this.barrios.find(b => b.properties.NOM_BARRIO === this.barrioSeleccionadoInicio);
-    const barrioDestino = this.barrios.find(b => b.properties.NOM_BARRIO === this.barrioSeleccionadoDestino);
+    const barrioOrigen = this.barrios.find(b => b.properties.NOM_BARRIO === this.barrioSeleccionadoInicio?.value);
+    const barrioDestino = this.barrios.find(b => b.properties.NOM_BARRIO === this.barrioSeleccionadoDestino?.value);
   
+    console.log(barrioOrigen)
+    console.log(barrioDestino)
     if (!barrioOrigen || !barrioDestino) {
       console.error('Uno de los barrios no se encuentra');
       return;
@@ -169,6 +165,9 @@ export class FilterComponent {
             this.barriosSeleccionados.emit([barrioOrigen, barrioDestino]);
             this.actualizarComboRuta(r.nombre);
           }
+          else {
+            console.log("No hay ruta")
+          }
         });
       });
     });
@@ -202,6 +201,37 @@ export class FilterComponent {
   actualizarComboRuta(nombre: string) {
     this.rutaSeleccionadaArchivo = nombre;
   }
+
+  onSeleccionRuta(event: Event) {
+    const index = (event.target as HTMLSelectElement).selectedIndex - 1;
+    const ruta = this.rutas[index];
+    if (ruta && ruta.archivo) {
+      this.deshabilitarOrigenDestino = true;
+      this.rutaSeleccionada.emit(ruta.archivo); // emitimos el nombre del archivo
+    } else {
+      console.error('Ruta no válida');
+    }
+  }
+
+  useMyLocation() {
+    this.mapService.getUserLocation((coords) => {
+      console.log('Ubicación desde filtro:', coords);
+    });
+  }
+
+  onRutaChange(archivo: string) {
+    this.routesService.cargarRuta(archivo).subscribe(ruta => {
+      this.rutaSeleccionada.emit(ruta);
+    });
+  }
+
+  
+  // Función para actualizar la descripción
+  addDescription(description: string) {
+    this.description = description; // Guardar la descripción recibida
+  }
+  
+  
 
   limpiarFiltros() {
     this.comunaSeleccionadaInicio = null;
