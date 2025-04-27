@@ -191,6 +191,7 @@ export class FilterComponent {
           }
           else {
             console.log("No hay ruta")
+            alert("No hay ruta")
           }
         });
       });
@@ -237,9 +238,51 @@ export class FilterComponent {
     }
   }
 
-  useMyLocation() {
+  useMyLocation(): void {
     this.mapService.getUserLocation((coords) => {
       console.log('Ubicación desde filtro:', coords);
+  
+      if (!coords) {
+        console.error('No se pudo obtener coordenadas.');
+        return;
+      }
+  
+      const puntoUsuario = turf.point([coords[1], coords[0]]); // [lng, lat]
+  
+      let barrioMasCercano = null;
+      let menorDistancia = Infinity;
+  
+      for (const barrio of this.barrios) {
+        const geom = barrio.geometry;
+        const poly = geom.type === 'MultiPolygon'
+          ? turf.multiPolygon(geom.coordinates)
+          : turf.polygon(geom.coordinates);
+  
+        const distancia = turf.pointToPolygonDistance(puntoUsuario, poly, { units: 'meters' });
+  
+        if (distancia < menorDistancia) {
+          menorDistancia = distancia;
+          barrioMasCercano = barrio;
+        }
+      }
+  
+      if (barrioMasCercano) {
+        console.log('Barrio más cercano encontrado:', barrioMasCercano.properties.NOM_BARRIO);
+        
+        // Asignamos el barrio encontrado como seleccionado
+        this.barrioSeleccionadoInicio = {
+          label: barrioMasCercano.properties.NOM_BARRIO,
+          value: barrioMasCercano.properties.NOM_BARRIO
+        };
+  
+        // Actualizamos también la comuna
+        this.comunaSeleccionadaInicio = barrioMasCercano.properties.NO__COMUNA;
+  
+        // Verificamos si ya se puede calcular la ruta
+        this.verificarSeleccion();
+      } else {
+        console.error('No se encontró barrio cercano.');
+      }
     });
   }
 
