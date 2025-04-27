@@ -24,7 +24,7 @@
         [items]="barriosFiltradosInicio"
         placeholder="Seleccione un barrio"
         [(ngModel)]="barrioSeleccionadoInicio"
-        (change)="verificarSeleccion()"
+        (change)="onBarrioSeleccionadoInicio()"
         [searchable]="true">
       </ng-select>
     </div>
@@ -53,7 +53,7 @@
         [items]="barriosFiltradosDestino"
         placeholder="Seleccione un barrio"
         [(ngModel)]="barrioSeleccionadoDestino"
-        (change)="verificarSeleccion()"
+        (change)="onBarrioSeleccionadoDestino()"
         [searchable]="true">
       </ng-select>
     </div>

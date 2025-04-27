@@ -74,6 +74,30 @@ export class FilterComponent {
     });
   }
 
+  onBarrioSeleccionadoInicio(): void {
+    if (this.barrioSeleccionadoInicio) {
+      const barrioEncontrado = this.barrios.find(
+        b => b.properties.NOM_BARRIO === this.barrioSeleccionadoInicio?.value
+      );
+      if (barrioEncontrado) {
+        this.comunaSeleccionadaInicio = barrioEncontrado.properties.NO__COMUNA;
+      }
+    }
+    this.verificarSeleccion();
+  }
+
+  onBarrioSeleccionadoDestino(): void {
+    if (this.barrioSeleccionadoDestino) {
+      const barrioEncontrado = this.barrios.find(
+        b => b.properties.NOM_BARRIO === this.barrioSeleccionadoDestino?.value
+      );
+      if (barrioEncontrado) {
+        this.comunaSeleccionadaDestino = barrioEncontrado.properties.NO__COMUNA;
+      }
+    }
+    this.verificarSeleccion();
+  }
+
   onComunaSeleccionadaInicio(): void {
     if (!this.comunaSeleccionadaInicio) {
       this.barriosFiltradosInicio = this.barrios
