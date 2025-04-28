@@ -36,7 +36,7 @@ interface Feature<T> {
 export class FilterComponent {
   @Output() rutaDesdeOrigenDestino = new EventEmitter<any>();
   @Output() barriosSeleccionados = new EventEmitter<any[]>();
-  @Output() rutaSeleccionada = new EventEmitter<string|null>();
+  @Output() rutaSeleccionada = new EventEmitter<string | string[]|null>();
   @Output() rutaDetectada = new EventEmitter<any>();
   @Output() nombreRutaSeleccionada = new EventEmitter<string>();
   deshabilitarRutas = false;
@@ -141,7 +141,9 @@ export class FilterComponent {
   onSeleccionOrigenDestino() {
     const barrioOrigen = this.barrios.find(b => b.properties.NOM_BARRIO === this.barrioSeleccionadoInicio?.value);
     const barrioDestino = this.barrios.find(b => b.properties.NOM_BARRIO === this.barrioSeleccionadoDestino?.value);
-  
+    const rutasCercanasOrigen: { ruta: any, geojson: any }[] = [];
+    const rutasCercanasDestino: { ruta: any, geojson: any }[] = [];
+
     console.log(barrioOrigen)
     console.log(barrioDestino)
     if (!barrioOrigen || !barrioDestino) {
@@ -187,19 +189,77 @@ export class FilterComponent {
           console.log("Antes"+estaCercaOrigen)
           console.log(estaCercaDestino)
           console.log(orientacionCorrecta)
+          if (estaCercaOrigen && !estaCercaDestino) {
+            rutasCercanasOrigen.push({ ruta: r, geojson: rutaGeoJSON });
+          }
+          if (estaCercaDestino && !estaCercaOrigen) {
+            rutasCercanasDestino.push({ ruta: r, geojson: rutaGeoJSON });
+          }
           if (estaCercaOrigen && estaCercaDestino && orientacionCorrecta) {
             console.log("Despues"+estaCercaOrigen)
             console.log(estaCercaDestino)
             console.log(orientacionCorrecta)
             console.log('[FilterComponent] Ruta cercana y con orientación válida');
-            this.rutaSeleccionada.emit(r.archivo);
+            this.rutaSeleccionada.emit([r.archivo]);
             this.barriosSeleccionados.emit([barrioOrigen, barrioDestino]);
             this.actualizarComboRuta(r.nombre);
             return
           }
           else {
-            console.log("No hay ruta")
-            
+            console.log("No hay ruta directa, buscando combinación de rutas...");
+          
+            rutasCercanasOrigen.forEach(rutaOrigen => {
+              rutasCercanasDestino.forEach(rutaDestino => {
+                const lineaOrigen = turf.lineString(rutaOrigen.geojson.features[0].geometry.coordinates);
+                const lineaDestino = turf.lineString(rutaDestino.geojson.features[0].geometry.coordinates);
+          
+                // Buscamos un punto cercano entre las dos rutas
+                const puntosOrigen = rutaOrigen.geojson.features[0].geometry.coordinates;
+                const puntosDestino = rutaDestino.geojson.features[0].geometry.coordinates;
+          
+                let transbordoEncontrado = false;
+          
+                for (let i = 0; i < puntosOrigen.length; i++) {
+                  const puntoO = turf.point(puntosOrigen[i]);
+          
+                  for (let j = 0; j < puntosDestino.length; j++) {
+                    const puntoD = turf.point(puntosDestino[j]);
+          
+                    const distancia = turf.distance(puntoO, puntoD, { units: 'meters' });
+          
+                    if (distancia <= 500) { // 500 metros o menos para considerar transbordo
+                      transbordoEncontrado = true;
+          
+                      console.log('¡Encontrado punto de transbordo cercano!');
+          
+                      // Ahora validamos la orientación:
+                      const indexOrigenInicio = this.puntoMasCercano(lineaOrigen, centroOrigen);
+                      const indexOrigenTransbordo = i;
+          
+                      const indexDestinoTransbordo = j;
+                      const indexDestinoFinal = this.puntoMasCercano(lineaDestino, centroDestino);
+          
+                      const orientacionValida = (indexOrigenInicio > indexOrigenTransbordo) && (indexDestinoTransbordo > indexDestinoFinal);
+          
+                      if (orientacionValida) {
+                        console.log('Orientación válida en combinación de rutas');
+          
+                        // Emitimos ambas rutas
+                        this.rutaSeleccionada.emit([rutaOrigen.ruta.archivo, rutaDestino.ruta.archivo]);
+                        this.barriosSeleccionados.emit([barrioOrigen, barrioDestino]);
+                        this.actualizarComboRuta(`${rutaOrigen.ruta.nombre} + ${rutaDestino.ruta.nombre}`);
+                        console.log(`${rutaOrigen.ruta.nombre} + ${rutaDestino.ruta.nombre}`)
+                        return; // terminamos
+                      } else {
+                        console.log('Orientación no válida en esta combinación');
+                      }
+                    }
+                  }
+          
+                  if (transbordoEncontrado) break;
+                }
+              });
+            });
           }
         });
       });

@@ -63,7 +63,7 @@ export class MapComponent implements OnInit {
     });
   }
 
-  addRuta(nombreArchivo: string | null) {
+  addRuta(nombreArchivo: string | string[] | null) {
     if (!nombreArchivo) {
       if (this.rutaActual) {
         this.mapService.getMap().removeLayer(this.rutaActual);
@@ -72,29 +72,55 @@ export class MapComponent implements OnInit {
       return;
     }
   
+    // Si es un arreglo (dos rutas)
+    if (Array.isArray(nombreArchivo)) {
+      // Eliminar ruta anterior si existe
+      if (this.rutaActual) {
+        this.mapService.getMap().removeLayer(this.rutaActual);
+        this.rutaActual = null;
+      }
+  
+      nombreArchivo.forEach(nombre => {
+        this.routesService.cargarRuta(nombre).subscribe(data => {
+          if (data && data.type === 'FeatureCollection' && Array.isArray(data.features)) {
+            const capa = L.geoJSON(data);
+            capa.addTo(this.mapService.getMap());
+            this.mapService.getMap().fitBounds(capa.getBounds());
+  
+            const description = data.features[0].properties.description || 'No disponible';
+            this.filterComponent.addDescription(description);
+  
+            // Cargar paraderos
+            this.mapService.cargarParaderos(this.paraderos, data);
+  
+            // ⚡ Si quieres guardar cada capa individual podrías hacer un array de rutas
+            // pero de momento no es obligatorio
+          } else {
+            console.error('El objeto no es un GeoJSON válido');
+          }
+        });
+      });
+      return;
+    }
+  
+    // Si es un string normal (una sola ruta)
     this.routesService.cargarRuta(nombreArchivo).subscribe(
       (data) => {
         console.log('Ruta cargada:', data);
   
         if (data && data.type === 'FeatureCollection' && Array.isArray(data.features)) {
-          // Eliminar ruta anterior si existe
           if (this.rutaActual) {
             this.mapService.getMap().removeLayer(this.rutaActual);
           }
   
-          // Obtener la descripción
           const description = data.features[0].properties.description || 'No disponible';
           this.filterComponent.addDescription(description);
   
-          // Agregar la nueva ruta al mapa
           const capa = L.geoJSON(data);
           capa.addTo(this.mapService.getMap());
           this.mapService.getMap().fitBounds(capa.getBounds());
-  
-          // Filtrar y cargar los paraderos cercanos a la ruta
           this.mapService.cargarParaderos(this.paraderos, data);
   
-          // Guardar la capa actual para poder eliminarla después
           this.rutaActual = capa;
         } else {
           console.error('El objeto no es un GeoJSON válido');
