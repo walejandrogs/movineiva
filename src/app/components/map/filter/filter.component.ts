@@ -149,7 +149,7 @@ export class FilterComponent {
       console.error('Uno de los barrios no se encuentra');
       return;
     }
-  
+    this.mapService.clearMapLayers();
     this.routesService.cargarTodasLasRutas().subscribe(rutas => {
       let rutasCargadas = 0;
   
