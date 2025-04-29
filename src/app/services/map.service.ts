@@ -25,7 +25,7 @@ export class MapService {
   });
   private map!: L.Map;
   private userMarker: L.Marker | null = null;
-  private paraderosLayer: L.LayerGroup | null = null;
+  private paraderosLayers: L.LayerGroup[] = [];
   constructor(private http: HttpClient) {}
   barriosLayer: L.GeoJSON<any> | null = null;
   // 👇 Define un icono personalizado
@@ -85,7 +85,6 @@ export class MapService {
   cargarParaderos(paraderos: any[], rutaGeoJSON: any) {
     const rutaFeature = rutaGeoJSON.features[0];
   
-    // Validamos que la geometría sea una línea
     if (rutaFeature.geometry.type !== 'LineString') {
       console.error('La ruta no es una LineString');
       return;
@@ -93,22 +92,16 @@ export class MapService {
   
     const linea = turf.lineString(rutaFeature.geometry.coordinates);
   
-    // Filtramos los paraderos que estén cerca de la línea (ruta)
     const paraderosCercanos = paraderos.filter((paradero) => {
       const punto = turf.point(paradero.geometry.coordinates);
-      // Distancia máxima en grados (~100 metros, puedes ajustar)
-      const distanciaMaxima = 0.00010; 
+      const distanciaMaxima = 0.00010; // (~100 metros)
       const distancia = turf.pointToLineDistance(punto, linea, { units: 'degrees' });
       return distancia <= distanciaMaxima;
     });
   
-    // Limpiar capa anterior si existe
-    if (this.paraderosLayer) {
-      this.map.removeLayer(this.paraderosLayer);
-    }
-  
-    // Mostrar los paraderos filtrados
-    this.paraderosLayer = L.geoJSON(paraderosCercanos, {
+    // 👉 Ya no eliminamos todos los paraderos anteriores.
+    // Creamos una nueva capa para estos paraderos
+    const nuevaCapaParaderos = L.geoJSON(paraderosCercanos, {
       pointToLayer: (feature, latlng) => {
         return L.marker(latlng, { icon: this.iconoParadero });
       },
@@ -117,14 +110,19 @@ export class MapService {
           layer.bindPopup(feature.properties.nombre);
         }
       }
-    }).addTo(this.map);
+    });
+  
+    nuevaCapaParaderos.addTo(this.map);
+  
+    // Guardar la capa para poder limpiarlas después si quieres
+    this.paraderosLayers.push(nuevaCapaParaderos);
   }
 
   clearParaderos() {
-    if (this.paraderosLayer) {
-      this.map.removeLayer(this.paraderosLayer); // Remover los paraderos si existe la capa
-      this.paraderosLayer = null;
-    }
+    this.paraderosLayers.forEach(capa => {
+      this.map.removeLayer(capa);
+    });
+    this.paraderosLayers = [];
   }
 
   resaltarBarrios(barrios: any[]) {

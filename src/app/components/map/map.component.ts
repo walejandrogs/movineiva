@@ -71,9 +71,16 @@ export class MapComponent implements OnInit {
       }
       return;
     }
+    const tipo_archivo = typeof nombreArchivo
+    console.log(tipo_archivo)
+    console.log(nombreArchivo)
     // Si es un arreglo (dos rutas)
-    if (Array.isArray(nombreArchivo)) {
+    if (Array.isArray(nombreArchivo) && nombreArchivo.length === 2) {
       // Eliminar ruta anterior si existe
+      let descripcionOrigen : string | null
+      let descripcionDestino : string | null
+      let rutaOrigen : string | null
+      let rutaDestino : string | null
       if (this.rutaActual) {
         this.mapService.getMap().removeLayer(this.rutaActual);
         this.rutaActual = null;
@@ -94,8 +101,9 @@ export class MapComponent implements OnInit {
           this.mapService.getMap().fitBounds(capaOrigen.getBounds());
 
           const description = data.features[0].properties.description || 'No disponible';
-          this.filterComponent.addDescription(description);
-
+          //this.filterComponent.addDescription(description);
+          descripcionOrigen = description
+          rutaOrigen = data.features[0].properties.name
           this.mapService.cargarParaderos(this.paraderos, data);
         } else {
           console.error('El objeto no es un GeoJSON válido');
@@ -117,43 +125,48 @@ export class MapComponent implements OnInit {
           this.mapService.getMap().fitBounds(capaDestino.getBounds());
 
           const description = data.features[0].properties.description || 'No disponible';
-          this.filterComponent.addDescription(description);
-
+          //this.filterComponent.addDescription(description);
+          descripcionDestino = description
+          rutaDestino = data.features[0].properties.name
           this.mapService.cargarParaderos(this.paraderos, data);
         } else {
           console.error('El objeto no es un GeoJSON válido');
         }
+        this.filterComponent.addDescription(`No se encontro una ruta directa, debe tomar una ruta combinada\n` + `Debe hacer uso de la ruta ` + rutaOrigen  + ` y hacer transbordo a la ruta ` + rutaDestino + `\n` +  `Descipcion ` + rutaOrigen + "\n" + descripcionOrigen + "\n" + "Descipcion " + rutaDestino + "\n" + descripcionDestino);
       });
       return;
+    } else {
+      // Si es un string normal (una sola ruta)
+      
+      this.routesService.cargarRuta(nombreArchivo[0]).subscribe(
+        (data) => {
+          console.log('Ruta cargada:', data);
+    
+          if (data && data.type === 'FeatureCollection' && Array.isArray(data.features)) {
+            if (this.rutaActual) {
+              this.mapService.getMap().removeLayer(this.rutaActual);
+            }
+    
+            const description = data.features[0].properties.description || 'No disponible';
+            this.filterComponent.addDescription(description);
+    
+            const capa = L.geoJSON(data);
+            capa.addTo(this.mapService.getMap());
+            this.mapService.getMap().fitBounds(capa.getBounds());
+            this.mapService.cargarParaderos(this.paraderos, data);
+    
+            this.rutaActual = capa;
+          } else {
+            console.error('El objeto no es un GeoJSON válido');
+          }
+        },
+        (error) => {
+          console.error('Error al cargar el archivo GeoJSON:', error);
+        }
+      );
     }
   
-    // Si es un string normal (una sola ruta)
-    this.routesService.cargarRuta(nombreArchivo).subscribe(
-      (data) => {
-        console.log('Ruta cargada:', data);
-  
-        if (data && data.type === 'FeatureCollection' && Array.isArray(data.features)) {
-          if (this.rutaActual) {
-            this.mapService.getMap().removeLayer(this.rutaActual);
-          }
-  
-          const description = data.features[0].properties.description || 'No disponible';
-          this.filterComponent.addDescription(description);
-  
-          const capa = L.geoJSON(data);
-          capa.addTo(this.mapService.getMap());
-          this.mapService.getMap().fitBounds(capa.getBounds());
-          this.mapService.cargarParaderos(this.paraderos, data);
-  
-          this.rutaActual = capa;
-        } else {
-          console.error('El objeto no es un GeoJSON válido');
-        }
-      },
-      (error) => {
-        console.error('Error al cargar el archivo GeoJSON:', error);
-      }
-    );
+    
   }
 
   mostrarRuta(geojsonData: any | null) {
