@@ -170,8 +170,8 @@ export class FilterComponent {
           const distanciaOrigen = turf.pointToLineDistance(centroOrigen, rutaLinea, { units: 'meters' });
           const distanciaDestino = turf.pointToLineDistance(centroDestino, rutaLinea, { units: 'meters' });
   
-          const estaCercaOrigen = distanciaOrigen <= 1000;
-          const estaCercaDestino = distanciaDestino <= 1000;
+          const estaCercaOrigen = distanciaOrigen <= 500;
+          const estaCercaDestino = distanciaDestino <= 500;
   
           const indexInicio = this.puntoMasCercano(rutaLinea, centroOrigen);
           const indexDestino = this.puntoMasCercano(rutaLinea, centroDestino);
@@ -206,18 +206,21 @@ export class FilterComponent {
       });
     });
   }
+  
   private buscarCombinaciones(
     rutasCercanasOrigen: { ruta: any, geojson: any }[],
     rutasCercanasDestino: { ruta: any, geojson: any }[],
     barrioOrigen: any,
     barrioDestino: any
   ) {
-    rutasCercanasOrigen.forEach(rutaOrigen => {
-      rutasCercanasDestino.forEach(rutaDestino => {
-        const lineaOrigen = turf.lineString(rutaOrigen.geojson.features[0].geometry.coordinates);
-        const lineaDestino = turf.lineString(rutaDestino.geojson.features[0].geometry.coordinates);
+    for (let a = 0; a < rutasCercanasOrigen.length; a++) {
+      const rutaOrigen = rutasCercanasOrigen[a];
+      const lineaOrigen = turf.lineString(rutaOrigen.geojson.features[0].geometry.coordinates);
+      const puntosOrigen = rutaOrigen.geojson.features[0].geometry.coordinates;
   
-        const puntosOrigen = rutaOrigen.geojson.features[0].geometry.coordinates;
+      for (let b = 0; b < rutasCercanasDestino.length; b++) {
+        const rutaDestino = rutasCercanasDestino[b];
+        const lineaDestino = turf.lineString(rutaDestino.geojson.features[0].geometry.coordinates);
         const puntosDestino = rutaDestino.geojson.features[0].geometry.coordinates;
   
         for (let i = 0; i < puntosOrigen.length; i++) {
@@ -225,7 +228,6 @@ export class FilterComponent {
   
           for (let j = 0; j < puntosDestino.length; j++) {
             const puntoD = turf.point(puntosDestino[j]);
-  
             const distancia = turf.distance(puntoO, puntoD, { units: 'meters' });
   
             if (distancia <= 500) {
@@ -241,13 +243,13 @@ export class FilterComponent {
                 this.rutaSeleccionada.emit([rutaOrigen.ruta.archivo, rutaDestino.ruta.archivo]);
                 this.barriosSeleccionados.emit([barrioOrigen, barrioDestino]);
                 this.actualizarComboRuta(`${rutaOrigen.ruta.nombre} + ${rutaDestino.ruta.nombre}`);
-                return;
+                return; // Salimos de toda la función al encontrar una combinación válida
               }
             }
           }
         }
-      });
-    });
+      }
+    }
   }
   private puntoMasCercano(linea: any, punto: any): number {
     let menorDist = Infinity;
