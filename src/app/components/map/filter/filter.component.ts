@@ -55,7 +55,7 @@ export class FilterComponent {
   rutaSeleccionadaDesdeFiltro: string | null = null;
   
 
-  rutas: { nombre: string, archivo: string }[] = [];
+  rutas: { nombre: string[]|string, archivo: string }[] = [];
 
   constructor(private mapService: MapService, private routesService: RoutesService, private neighborhoodService : NeighborhoodService) {}
 
@@ -283,7 +283,8 @@ export class FilterComponent {
     const ruta = this.rutas[index];
     if (ruta && ruta.archivo) {
       this.deshabilitarOrigenDestino = true;
-      this.rutaSeleccionada.emit(ruta.archivo); // emitimos el nombre del archivo
+      this.rutaSeleccionada.emit([ruta.archivo]); // emitimos el nombre del archivo
+      console.log(ruta.archivo)
     } else {
       console.error('Ruta no válida');
     }

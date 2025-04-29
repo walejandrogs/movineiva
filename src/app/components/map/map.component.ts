@@ -137,7 +137,7 @@ export class MapComponent implements OnInit {
       return;
     } else {
       // Si es un string normal (una sola ruta)
-      
+      console.log(nombreArchivo)
       this.routesService.cargarRuta(nombreArchivo[0]).subscribe(
         (data) => {
           console.log('Ruta cargada:', data);
