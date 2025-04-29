@@ -71,7 +71,6 @@ export class MapComponent implements OnInit {
       }
       return;
     }
-  
     // Si es un arreglo (dos rutas)
     if (Array.isArray(nombreArchivo)) {
       // Eliminar ruta anterior si existe
@@ -80,25 +79,50 @@ export class MapComponent implements OnInit {
         this.rutaActual = null;
       }
   
-      nombreArchivo.forEach(nombre => {
-        this.routesService.cargarRuta(nombre).subscribe(data => {
-          if (data && data.type === 'FeatureCollection' && Array.isArray(data.features)) {
-            const capa = L.geoJSON(data);
-            capa.addTo(this.mapService.getMap());
-            this.mapService.getMap().fitBounds(capa.getBounds());
-  
-            const description = data.features[0].properties.description || 'No disponible';
-            this.filterComponent.addDescription(description);
-  
-            // Cargar paraderos
-            this.mapService.cargarParaderos(this.paraderos, data);
-  
-            // ⚡ Si quieres guardar cada capa individual podrías hacer un array de rutas
-            // pero de momento no es obligatorio
-          } else {
-            console.error('El objeto no es un GeoJSON válido');
-          }
-        });
+      // Ruta de Origen (color azul)
+      this.routesService.cargarRuta(nombreArchivo[0]).subscribe(data => {
+        if (data && data.type === 'FeatureCollection' && Array.isArray(data.features)) {
+          const capaOrigen = L.geoJSON(data, {
+            style: {
+              color: 'blue',
+              weight: 4,
+              opacity: 0.8
+            }
+          });
+
+          capaOrigen.addTo(this.mapService.getMap());
+          this.mapService.getMap().fitBounds(capaOrigen.getBounds());
+
+          const description = data.features[0].properties.description || 'No disponible';
+          this.filterComponent.addDescription(description);
+
+          this.mapService.cargarParaderos(this.paraderos, data);
+        } else {
+          console.error('El objeto no es un GeoJSON válido');
+        }
+      });
+
+      // Ruta de Destino (color naranja)
+      this.routesService.cargarRuta(nombreArchivo[1]).subscribe(data => {
+        if (data && data.type === 'FeatureCollection' && Array.isArray(data.features)) {
+          const capaDestino = L.geoJSON(data, {
+            style: {
+              color: 'orange',
+              weight: 4,
+              opacity: 0.8
+            }
+          });
+
+          capaDestino.addTo(this.mapService.getMap());
+          this.mapService.getMap().fitBounds(capaDestino.getBounds());
+
+          const description = data.features[0].properties.description || 'No disponible';
+          this.filterComponent.addDescription(description);
+
+          this.mapService.cargarParaderos(this.paraderos, data);
+        } else {
+          console.error('El objeto no es un GeoJSON válido');
+        }
       });
       return;
     }
