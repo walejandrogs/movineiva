@@ -281,6 +281,11 @@ export class FilterComponent {
   }
 
   onSeleccionRuta(event: Event) {
+    this.comunaSeleccionadaInicio = null;
+    this.barrioSeleccionadoInicio  = null;
+    this.comunaSeleccionadaDestino = null;
+    this.barrioSeleccionadoDestino  = null;
+    this.mapService.clearMapLayers();
     const index = (event.target as HTMLSelectElement).selectedIndex - 1;
     const ruta = this.rutas[index];
     if (ruta && ruta.archivo) {
@@ -369,6 +374,7 @@ export class FilterComponent {
     this.mapService.clearParaderos();
     this.mapService.clearMapLayers();
   }
+  
 
 
 
