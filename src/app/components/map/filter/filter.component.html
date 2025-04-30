@@ -71,10 +71,18 @@
     <!-- Selector de rutas -->
     <div class="col-12">
       <h6 class="mb-1 text-dark">Ruta disponible</h6>
-      <select class="form-select form-select-sm" [(ngModel)]="rutaSeleccionadaArchivo" (change)="onSeleccionRuta($event)" [disabled]="deshabilitarRutas">
-        <option selected disabled>Seleccione una ruta</option>
-        <option *ngFor="let ruta of rutas">{{ ruta.nombre }}</option>
-      </select>
+      <ng-select
+        [items]="rutas"
+        bindLabel="nombre"
+        bindValue="archivo"
+        [(ngModel)]="rutaSeleccionadaArchivo"
+        (change)="onSeleccionRuta($event)"
+        [disabled]="deshabilitarRutas"
+        placeholder="Seleccione una ruta"
+        [clearable]="true"
+        [searchable]="true"
+        class="form-select form-select-sm bg-dark text-light  ng-select-dark ">
+      </ng-select>
     </div>
 
     <!-- Descripción -->

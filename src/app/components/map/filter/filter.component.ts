@@ -280,18 +280,16 @@ export class FilterComponent {
     this.rutaSeleccionadaArchivo = nombre;
   }
 
-  onSeleccionRuta(event: Event) {
+  onSeleccionRuta(ruta: { nombre: string; archivo: string }) {
     this.comunaSeleccionadaInicio = null;
     this.barrioSeleccionadoInicio  = null;
     this.comunaSeleccionadaDestino = null;
     this.barrioSeleccionadoDestino  = null;
     this.mapService.clearMapLayers();
-    const index = (event.target as HTMLSelectElement).selectedIndex - 1;
-    const ruta = this.rutas[index];
+  
     if (ruta && ruta.archivo) {
       this.deshabilitarOrigenDestino = true;
       this.rutaSeleccionada.emit([ruta.archivo]); // emitimos el nombre del archivo
-      console.log(ruta.archivo)
     } else {
       console.error('Ruta no válida');
     }
