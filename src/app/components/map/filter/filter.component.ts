@@ -182,7 +182,7 @@ export class FilterComponent {
             console.log('[FilterComponent] Ruta directa encontrada');
             this.rutaSeleccionada.emit([r.archivo]);
             this.barriosSeleccionados.emit([barrioOrigen, barrioDestino]);
-            this.actualizarComboRuta(r.nombre);
+            this.actualizarComboRuta(r.archivo);
             rutaDirectaEncontrada = true;
             return;
           }
@@ -276,8 +276,8 @@ export class FilterComponent {
     }
   }
   
-  actualizarComboRuta(nombre: string) {
-    this.rutaSeleccionadaArchivo = nombre;
+  actualizarComboRuta(archivo: string) {
+    this.rutaSeleccionadaArchivo = archivo;
   }
 
   onSeleccionRuta(ruta: { nombre: string; archivo: string }) {

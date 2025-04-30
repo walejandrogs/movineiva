@@ -13,7 +13,7 @@
       <label for="comunaInicio" class="form-label text-dark">Comuna</label>
       <!-- Combo de Comunas -->
       <select class="form-select form-select-sm" [(ngModel)]="comunaSeleccionadaInicio" (change)="onComunaSeleccionadaInicio()">
-        <option disabled selected>Seleccione una comuna</option>
+        <option value="" selected >Seleccione una comuna</option>
         <option *ngFor="let comuna of comunas" [value]="comuna">{{ comuna }}</option>
       </select>
     </div>
@@ -41,8 +41,8 @@
     <!-- COMUNA -->
     <div class="col-12 col-md-4">
       <label for="comunaDestino" class="form-label text-dark">Comuna</label>
-      <select id="comunaDestino" class="form-select form-select-sm" [(ngModel)]="comunaSeleccionadaDestino" (change)="onComunaSeleccionadaDestino()">
-        <option disabled selected>Seleccione una comuna</option>
+      <select id="comunaDestino" class="form-select form-select-sm" [(ngModel)]="comunaSeleccionadaDestino" (change)="onComunaSeleccionadaDestino()" >
+        <option value="" selected>Seleccione una comuna</option>
         <option *ngFor="let comuna of comunas" [value]="comuna">{{ comuna }}</option>
       </select>
     </div>
