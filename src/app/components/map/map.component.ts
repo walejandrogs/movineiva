@@ -132,8 +132,11 @@ export class MapComponent implements OnInit {
         } else {
           console.error('El objeto no es un GeoJSON válido');
         }
-        this.filterComponent.addDescription(`No se encontro una ruta directa, debe tomar una ruta combinada\n` + `Debe hacer uso de la ruta ` + rutaOrigen  + ` y hacer transbordo a la ruta ` + rutaDestino + `\n` +  `Descipcion ` + rutaOrigen + "\n" + descripcionOrigen + "\n" + "Descipcion " + rutaDestino + "\n" + descripcionDestino);
-      });
+        this.filterComponent.addDescription(`No se encontró una ruta directa, debe tomar una ruta combinada\n\n` +
+          `Debe hacer uso de la ruta: ${rutaOrigen!.toUpperCase()} y hacer transbordo a la ruta: ${rutaDestino!.toUpperCase()}\n\n` +
+          `--- Descripción ${rutaOrigen} ---\n${descripcionOrigen}\n\n` +
+          `--- Descripción ${rutaDestino} ---\n${descripcionDestino}`);
+        });
       return;
     } else {
       // Si es un string normal (una sola ruta)
@@ -226,10 +229,18 @@ export class MapComponent implements OnInit {
       // Resalta el barrio de origen con verde
       const barrioLayerOrigen = L.geoJSON(barrioOrigen, { style: estiloOrigen });
       barrioLayerOrigen.addTo(this.barriosResaltados);
+      barrioLayerOrigen.bindTooltip("Inicio",{
+        permanent: true,
+        direction: "center"
+      });
   
       // Resalta el barrio de destino con rojo
       const barrioLayerDestino = L.geoJSON(barrioDestino, { style: estiloDestino });
       barrioLayerDestino.addTo(this.barriosResaltados);
+      barrioLayerDestino.bindTooltip("Destino",{
+        permanent: true,
+        direction: "center"
+      });
     }
   
     this.barriosResaltados.addTo(map);

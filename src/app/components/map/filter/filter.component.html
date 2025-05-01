@@ -10,17 +10,19 @@
   <div class="row gy-3">
     <!-- COMUNA -->
     <div class="col-12 col-md-4">
-      <label for="comunaInicio" class="form-label text-dark">Comuna</label>
+      <label for="comunaInicio" class="form-label text-dark">Filtrar por:</label>
       <!-- Combo de Comunas -->
       <select class="form-select form-select-sm" [(ngModel)]="comunaSeleccionadaInicio" (change)="onComunaSeleccionadaInicio()">
-        <option value="" selected >Seleccione una comuna</option>
-        <option *ngFor="let comuna of comunas" [value]="comuna">{{ comuna }}</option>
+        <option value="" selected >Seleccione una opción</option>
+        <option *ngFor="let comuna of comunas" [value]="comuna">
+          {{ comuna === 0 ? 'CORREGIMIENTO' : (comuna === -1 ? 'CLL - AV - CRA' : 'COMUNA ' + comuna) }}
+        </option>
       </select>
     </div>
 
     <!-- BARRIO -->
     <div class="col-12 col-md-8">
-      <label for="barrioInicio" class="form-label text-dark">Barrio</label>
+      <label for="barrioInicio" class="form-label text-dark">Ubicaciones disponibles</label>
       <!-- ng-select para seleccionar barrio -->
       <ng-select
         class="form-select form-select-sm bg-dark text-light  ng-select-dark "
@@ -40,16 +42,18 @@
   <div class="row gy-3">
     <!-- COMUNA -->
     <div class="col-12 col-md-4">
-      <label for="comunaDestino" class="form-label text-dark">Comuna</label>
+      <label for="comunaDestino" class="form-label text-dark">Filtrar por:</label>
       <select id="comunaDestino" class="form-select form-select-sm" [(ngModel)]="comunaSeleccionadaDestino" (change)="onComunaSeleccionadaDestino()" >
-        <option value="" selected>Seleccione una comuna</option>
-        <option *ngFor="let comuna of comunas" [value]="comuna">{{ comuna }}</option>
+        <option value="" selected>Seleccione una opción</option>
+        <option *ngFor="let comuna of comunas" [value]="comuna">
+          {{ comuna === 0 ? 'CORREGIMIENTO' : (comuna === -1 ? 'CLL - AV - CRA' : 'COMUNA ' + comuna) }}
+        </option>
       </select>
     </div>
 
     <!-- BARRIO -->
     <div class="col-12 col-md-8">
-      <label for="barrioDestino" class="form-label text-dark">Barrio</label>
+      <label for="barrioDestino" class="form-label text-dark">Ubicaciones disponibles</label>
       <!-- Barrio de Destino -->
       <ng-select
         class="form-select form-select-sm bg-dark text-light  ng-select-dark "

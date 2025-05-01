@@ -143,7 +143,7 @@ export class FilterComponent {
     const barrioDestino = this.barrios.find(b => b.properties.NOM_BARRIO === this.barrioSeleccionadoDestino?.value);
     const rutasCercanasOrigen: { ruta: any, geojson: any }[] = [];
     const rutasCercanasDestino: { ruta: any, geojson: any }[] = [];
-    let rutaDirectaEncontrada = false; // 🔥 bandera para saber si ya encontramos ruta directa
+    let rutaDirectaEncontrada = false; // bandera para saber si ya encontramos ruta directa
   
     if (!barrioOrigen || !barrioDestino) {
       console.error('Uno de los barrios no se encuentra');
@@ -170,8 +170,9 @@ export class FilterComponent {
           const distanciaOrigen = turf.pointToLineDistance(centroOrigen, rutaLinea, { units: 'meters' });
           const distanciaDestino = turf.pointToLineDistance(centroDestino, rutaLinea, { units: 'meters' });
   
-          const estaCercaOrigen = distanciaOrigen <= 500;
-          const estaCercaDestino = distanciaDestino <= 500;
+          const estaCercaOrigen = distanciaOrigen <= 400;
+          const estaCercaDestino = distanciaDestino <= 400;
+        
   
           const indexInicio = this.puntoMasCercano(rutaLinea, centroOrigen);
           const indexDestino = this.puntoMasCercano(rutaLinea, centroDestino);
@@ -194,6 +195,7 @@ export class FilterComponent {
             }
             if (estaCercaDestino && !estaCercaOrigen) {
               rutasCercanasDestino.push({ ruta: r, geojson: rutaGeoJSON });
+              
             }
           }
   
