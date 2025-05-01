@@ -1,0 +1,20 @@
+
+<div class="position-relative w-100 h-100">
+  <!-- Botón flotante -->
+  <button class="btn btn-primary position-absolute top-0 start-0 m-3 z-3"  (click)="toggleFiltro()">
+    Filtros
+  </button>
+
+  <!-- Componente Filtro superpuesto -->
+  <div [hidden]="!mostrarFiltro" class="position-absolute top-0 start-0 m-3 z-2 bg-white p-3 rounded shadow overflow-auto"
+  style="max-height: calc(100vh - 140px); width: 90vw; max-width: 500px;">
+    <app-filter (rutaSeleccionada)="addRuta($event)" 
+    (rutaDesdeOrigenDestino)="mostrarRuta($event)"
+    (barriosSeleccionados)="resaltarBarrios($event)"
+    (rutaDetectada)="mostrarRuta($event)"
+    ></app-filter>
+  </div>
+
+  <!-- Mapa -->
+  <div id="map" class="position-absolute top-0 start-0 w-100" style="height: calc(100vh - 120px); z-index: 1;"></div>
+</div>
