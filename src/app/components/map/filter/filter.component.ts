@@ -357,13 +357,13 @@ export class FilterComponent {
     this.description = description; // Guardar la descripción recibida
   }
   
-  
-
   limpiarFiltros() {
     this.comunaSeleccionadaInicio = null;
     this.barrioSeleccionadoInicio  = null;
+    this.onComunaSeleccionadaInicio()
     this.comunaSeleccionadaDestino = null;
     this.barrioSeleccionadoDestino  = null;
+    this.onComunaSeleccionadaDestino()
     this.deshabilitarOrigenDestino = false;
     this.deshabilitarRutas = false;
     this.rutaSeleccionadaArchivo = '';
@@ -375,9 +375,5 @@ export class FilterComponent {
     this.mapService.clearMapLayers();
   }
   
-
-
-
-
 }
 
