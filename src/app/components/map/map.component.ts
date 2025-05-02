@@ -91,7 +91,7 @@ export class MapComponent implements OnInit {
         if (data && data.type === 'FeatureCollection' && Array.isArray(data.features)) {
           const capaOrigen = L.geoJSON(data, {
             style: {
-              color: 'blue',
+              color: 'green',
               weight: 4,
               opacity: 0.8
             }
@@ -115,7 +115,7 @@ export class MapComponent implements OnInit {
         if (data && data.type === 'FeatureCollection' && Array.isArray(data.features)) {
           const capaDestino = L.geoJSON(data, {
             style: {
-              color: 'orange',
+              color: 'red',
               weight: 4,
               opacity: 0.8
             }
