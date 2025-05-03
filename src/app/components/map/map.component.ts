@@ -63,6 +63,18 @@ export class MapComponent implements OnInit {
     });
   }
 
+  // sincronizarMiUbicacion(){
+  //   this.mapService.watchUserLocation();
+  //   console.log('Ubicación obtenida y sincronizada desde el componente');
+  // }
+  toggleTracking(): void {
+    this.mapService.toggleUserTracking();
+  }
+
+  get trackingStatus(): boolean {
+    return this.mapService.isTrackingEnabled();
+  }
+   
   addRuta(nombreArchivo: string | string[] | null) {
     if (!nombreArchivo) {
       if (this.rutaActual) {
@@ -86,7 +98,7 @@ export class MapComponent implements OnInit {
         this.rutaActual = null;
       }
   
-      // Ruta de Origen (color azul)
+      // Ruta de Origen (color verde)
       this.routesService.cargarRuta(nombreArchivo[0]).subscribe(data => {
         if (data && data.type === 'FeatureCollection' && Array.isArray(data.features)) {
           const capaOrigen = L.geoJSON(data, {
@@ -95,6 +107,10 @@ export class MapComponent implements OnInit {
               weight: 4,
               opacity: 0.8
             }
+          });
+          capaOrigen.bindTooltip("Ruta Inicio",{
+            permanent: false,
+            direction: "bottom"
           });
 
           capaOrigen.addTo(this.mapService.getMap());
@@ -119,6 +135,10 @@ export class MapComponent implements OnInit {
               weight: 4,
               opacity: 0.8
             }
+          });
+          capaDestino.bindTooltip("Ruta Destino",{
+            permanent: false,
+            direction: "bottom"
           });
 
           capaDestino.addTo(this.mapService.getMap());

@@ -1,16 +1,16 @@
 <footer class="bg-light text-center py-3 bg-dark">
     <div class="m-auto">
-        <a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal" class="me-3">Sobre MoviNeiva</a>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#instructiveModal" class="me-3">Instructivo MoviNeiva</a>
         <a href="LINK_DEL_FORMULARIO" target="_blank">Opinión</a>
     </div>
   </footer>
   
   <!-- Modal -->
-  <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+  <div class="modal fade" id="instructiveModal" #instructiveModal tabindex="-1" aria-labelledby="instructiveModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="aboutModalLabel">Instructivo de Uso de la Aplicación</h5>
+          <h5 class="modal-title" id="instructiveLabel">Instructivo de Uso de la Aplicación</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="modal-body text-start" style="max-height: 70vh; overflow-y: auto;">
@@ -26,6 +26,12 @@
           <h6>2. Mapa Dinámico</h6>
           <ul>
             <li>En el cuerpo de la aplicación se encuentra un mapa que ocupa todo el ancho de la pantalla.</li>
+            <li>En la esquina superior derecha del mapa hay un botón azul con el texto <strong>Activar seguimiento</strong>.</li>
+            <img src="\assets\images\buttonActivarSeguimiento.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo botón Activar Seguimiento">
+            <li>Al hacer clic se mostrara un marcador en el mapa con el mensaje "Estás aquí".</li>
+            <img src="\assets\images\iconUbicacion.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo Icono de ubicacion">
+            <li>Para detener el seguimiento debe hacer clic nuevamente en el botón azul que ahora tiene el texto <strong>Detener seguimiento</strong>.</li>
+            <img src="\assets\images\buttonDetenerSeguimiento.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo botón Detener Seguimiento">
             <li>En la esquina superior izquierda del mapa hay un botón azul con el texto <strong>Filtros</strong>.</li>
             <img src="\assets\images\buttonFiltros.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo botón Filtros">
             <li>Al hacer clic se despliega un panel con las siguientes secciones: 
@@ -103,9 +109,12 @@
               <ul>
                 <li>Se resaltan los barrios de inicio y destino.</li>
                 <li>Se muestran paraderos.</li>
-                <li>Ruta de origen: azul. Ruta de destino: naranja.</li>
+                <li>Ruta de origen: verde. </li>
+                <li>Ruta de destino: roja.</li>
+                <img src="\assets\images\rutaCombinada.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo ruta Combinada">
                 <li>No se llena la selección de rutas.</li>
                 <li>La descripción muestra la combinación necesaria.</li>
+                <img src="\assets\images\combosRutasCombinadas.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo selecciones rutas combinadas">
               </ul>
             </li>
           </ul>
@@ -124,6 +133,7 @@
           <hr>
           <h6>7. Botón Limpiar Filtros</h6>
           <ul>
+            <img src="\assets\images\buttonLimpiarFiltros.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo boton Limpiar Filtros">
             <li>Ubicado al final del panel de filtros.</li>
             <li>Borra todo lo mostrado en el mapa y todas las selecciones hechas en Inicio, Destino y Rutas.</li>
           </ul>
