@@ -1,11 +1,13 @@
 <footer class="bg-light text-center py-3 bg-dark">
     <div class="m-auto">
         <a href="#" data-bs-toggle="modal" data-bs-target="#instructiveModal" class="me-3">Instructivo MoviNeiva</a>
-        <a href="LINK_DEL_FORMULARIO" target="_blank">Opinión</a>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal" class="me-3">Sobre MoviNeiva</a>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#feedbackModal" class="me-3">Formulario de Opinión</a>
+
     </div>
   </footer>
   
-  <!-- Modal -->
+  <!-- Modal  Instructivo-->
   <div class="modal fade" id="instructiveModal" #instructiveModal tabindex="-1" aria-labelledby="instructiveModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
@@ -144,4 +146,53 @@
       </div>
     </div>
   </div>
-  
+
+  <!-- Modal Sobre MoviNeiva -->
+<div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="aboutModalLabel">Sobre MoviNeiva</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body text-start" style="max-height: 70vh; overflow-y: auto;">
+        <p><strong>MoviNeiva</strong> es una aplicación web desarrollada para facilitar la visualización y exploración del sistema de transporte público de la ciudad de Neiva. Su objetivo principal es brindar a los ciudadanos una herramienta intuitiva y accesible para consultar rutas, paraderos y zonas de cobertura de manera dinámica.</p>
+
+        <p>Este proyecto nace como una iniciativa de apoyo a la movilidad urbana, integrando tecnologías web y geográficas para mejorar la experiencia de los usuarios del transporte público. A través del uso de mapas interactivos, filtros de búsqueda y geolocalización, MoviNeiva permite encontrar rutas entre distintos barrios, identificar paraderos cercanos, y comprender mejor cómo funciona la red de transporte.</p>
+
+        <p>El sistema fue desarrollado como un aporte al acceso a la información, fomentando una ciudad más conectada y sustentable. La información geográfica empleada proviene de fuentes oficiales.</p>
+
+        <p>MoviNeiva es un proyecto en evolución. Agradecemos cualquier retroalimentación para seguir mejorando la herramienta.</p>
+
+        <p><strong>Versión actual:</strong> 1.0<br>
+        <strong>Última actualización:</strong> Mayo de 2025</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal con el formulario incrustado -->
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="feedbackModalLabel">Formulario de Opinión sobre MoviNeiva</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body p-0" style="height: 80vh; overflow-y: auto;">
+        <!-- Responsive iframe contenedor -->
+        <div class="ratio ratio-1x1" style="min-height: 100%;">
+          <iframe 
+            src="https://docs.google.com/forms/d/e/1FAIpQLSfLgAs3B5LMI2jMHNSMNbdIDP_BOpRjEAUxaor82o0MAPuNiw/viewform?embedded=true" 
+            style="border:0;" 
+            allowfullscreen
+            loading="lazy">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
