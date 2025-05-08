@@ -215,6 +215,7 @@ export class FilterComponent {
     barrioOrigen: any,
     barrioDestino: any
   ) {
+    let encontroCombinacion = false;
     for (let a = 0; a < rutasCercanasOrigen.length; a++) {
       const rutaOrigen = rutasCercanasOrigen[a];
       const lineaOrigen = turf.lineString(rutaOrigen.geojson.features[0].geometry.coordinates);
@@ -251,6 +252,9 @@ export class FilterComponent {
           }
         }
       }
+    }
+    if (!encontroCombinacion) {
+      alert('No se encontró una ruta directa ni combinada para ir desde el punto de origen hasta el destino seleccionado. Intenta cambiar los puntos de partida o llegada.');
     }
   }
   private puntoMasCercano(linea: any, punto: any): number {
