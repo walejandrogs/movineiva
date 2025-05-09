@@ -5,7 +5,7 @@
 <div class="container mb-4 mt-4">
   <h5 class="text-dark">Inicio</h5>
   <div>
-    <button (click)="useMyLocation()">Ubicacion</button>
+    <button (click)="useMyLocation()">Mi Ubicación</button>
   </div>
   <div class="row gy-3">
     <!-- COMUNA -->
@@ -27,7 +27,7 @@
       <ng-select
         class="form-select form-select-sm bg-dark text-light  ng-select-dark "
         [items]="barriosFiltradosInicio"
-        placeholder="Seleccione un barrio"
+        placeholder="Seleccione una ubicación"
         [(ngModel)]="barrioSeleccionadoInicio"
         (change)="onBarrioSeleccionadoInicio()"
         [searchable]="true">
@@ -58,7 +58,7 @@
       <ng-select
         class="form-select form-select-sm bg-dark text-light  ng-select-dark "
         [items]="barriosFiltradosDestino"
-        placeholder="Seleccione un barrio"
+        placeholder="Seleccione una ubicación"
         [(ngModel)]="barrioSeleccionadoDestino"
         (change)="onBarrioSeleccionadoDestino()"
         [searchable]="true">

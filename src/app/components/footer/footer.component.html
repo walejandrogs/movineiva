@@ -1,0 +1,205 @@
+<footer class="bg-dark text-center py-3">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-center gap-3">
+      <a href="#" data-bs-toggle="modal" data-bs-target="#instructiveModal" class="text-light">
+        Instructivo MoviNeiva
+      </a>
+      <a href="#" data-bs-toggle="modal" data-bs-target="#aboutModal" class="text-light">
+        Sobre MoviNeiva
+      </a>
+      <a href="#" data-bs-toggle="modal" data-bs-target="#feedbackModal" class="text-light">
+        Formulario de Opinión
+      </a>
+    </div>
+  </div>
+</footer>
+
+<!-- Modal  Instructivo-->
+<div class="modal fade" id="instructiveModal" #instructiveModal tabindex="-1" aria-labelledby="instructiveModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="instructiveLabel">Instructivo de Uso de la Aplicación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body text-start" style="max-height: 70vh; overflow-y: auto;">
+        <p>Este instructivo está diseñado para guiar a los usuarios en el uso correcto de la aplicación MoviNeiva que le permitira realizar la visualización de rutas del sistema de transporte público en Neiva.</p>
+
+        <h6>1. Botón MIGO</h6>
+        <ul>
+          <li>En la parte superior derecha, encontrará un botón azul con el texto <strong>MIGO</strong>.</li>
+          <img src="assets\images\buttonMigo.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo botón Migo">
+          <li>Al hacer clic en él, será redirigido al repositorio de rutas MIGO del sistema SEPT.</li>
+        </ul>
+        
+        <h6>2. Mapa Dinámico</h6>
+        <ul>
+          <li>En el cuerpo de la aplicación se encuentra un mapa que ocupa todo el ancho de la pantalla.</li>
+          <li>En la esquina superior derecha del mapa hay un botón azul con el texto <strong>Activar seguimiento</strong>.</li>
+          <img src="assets\images\buttonActivarSeguimiento.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo botón Activar Seguimiento">
+          <li>Al hacer clic se mostrara un marcador en el mapa con el mensaje "Estás aquí".</li>
+          <img src="assets\images\iconUbicacion.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo Icono de ubicacion">
+          <li>Para detener el seguimiento debe hacer clic nuevamente en el botón azul que ahora tiene el texto <strong>Detener seguimiento</strong>.</li>
+          <img src="assets\images\buttonDetenerSeguimiento.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo botón Detener Seguimiento">
+          <li>En la esquina superior izquierda del mapa hay un botón azul con el texto <strong>Filtros</strong>.</li>
+          <img src="assets\images\buttonFiltros.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo botón Filtros">
+          <li>Al hacer clic se despliega un panel con las siguientes secciones: 
+              <ul>
+                  <li>Sección: Inicio</li>
+                  <li>Sección: Destino</li>
+                  <li>Sección: Rutas</li>
+              </ul>
+          </li>
+        </ul>
+
+        <hr>
+        <h6>3. Sección: Inicio</h6>
+        <strong>Botón Ubicación</strong>
+        
+        <ul>
+          <img src="assets\images\buttonUbicacion.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo botón Ubicacion">
+          <li>Solicita permiso para acceder a su ubicación.</li>
+          <li>Si lo acepta:
+            <ul>
+              <li>Se agrega un marcador en el mapa con el mensaje "Estás aquí".</li>
+              <img src="assets\images\iconUbicacion.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo Icono de ubicacion">
+              <li>Se autocompletan las opciones de selección de <strong>Filtrar por</strong> y <strong>Ubicaciones disponibles</strong> según su ubicación.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <strong>Selecciones Manuales</strong>
+        <ul>
+          <li><strong>Filtrar por (opcional):</strong> Permite filtrar por comunas, corregimientos o calles.</li>
+          <img src="assets\images\comboFiltrar.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo seleccion filtrar por">
+          <li><strong>Ubicaciones disponibles:</strong>
+              
+            <ul>
+              <li>Muestra las ubicaciones filtradas.</li>
+              <img src="assets\images\comboUbicaciones.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo seleccion Ubicaciones disponibles">
+              <li>Si ya hay un destino, el mapa muestra:
+                  <ul>
+                      <li>La ruta (Linea azul)</li>
+                      <img src="assets\images\ruta.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo Ruta">
+                      <li>paraderos (Marcador azul)</li>
+                      <img src="assets\images\iconParadero.PNG" class="img-fluid rounded m-3 w-20" alt="Ejemplo Paraderos">
+                      <li>marcadores de inicio (Poligono verde)</li>
+                      <img src="assets\images\barrioInicio.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo Barrio Inicio">
+                      <li>marcadores de destino (Poligono rojo)</li>
+                      <img src="assets\images\barrioDestino.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo Barrio Destino">
+                  </ul> 
+            </ul>
+          </li>
+        </ul>
+
+        <hr>
+        <h6>4. Sección: Destino</h6>
+        <strong>Selecciones Manuales</strong>
+        <ul>
+          <li><strong>Filtrar por (opcional):</strong> Igual que en Inicio, filtra por tipo de ubicación.</li>
+          <li><strong>Ubicaciones disponibles:</strong>
+            <ul>
+              <li>Muestra las ubicaciones filtradas.</li>
+              <li>Si ya hay un inicio, se visualiza la ruta, paraderos y marcadores.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <hr>
+        <h6>5. Búsqueda de Ruta</h6>
+        <ul>
+          <li>Si hay una ruta directa:
+            <ul>
+              <li>Se llena la opción de rutas y se actualiza la descripción.</li>
+              <img src="assets\images\rutaDirecta.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo ruta directa">
+            </ul>
+          </li>
+          <li>Si hay una combinación de dos rutas:
+            <ul>
+              <li>Se resaltan los barrios de inicio y destino.</li>
+              <li>Se muestran paraderos.</li>
+              <li>Ruta de origen: verde. </li>
+              <li>Ruta de destino: roja.</li>
+              <img src="assets\images\rutaCombinada.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo ruta Combinada">
+              <li>No se llena la selección de rutas.</li>
+              <li>La descripción muestra la combinación necesaria.</li>
+              <img src="assets\images\combosRutasCombinadas.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo selecciones rutas combinadas">
+            </ul>
+          </li>
+        </ul>
+
+        <hr>
+        <h6>6. Sección: Rutas</h6>
+        <ul>
+          <li>Visualiza todas las rutas disponibles.</li>
+          <li>Al seleccionar una:
+            <ul>
+              <li>Se muestra la ruta en el mapa, con paraderos y descripción actualizada.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <hr>
+        <h6>7. Botón Limpiar Filtros</h6>
+        <ul>
+          <img src="assets\images\buttonLimpiarFiltros.PNG" class="img-fluid rounded m-3 w-10" alt="Ejemplo boton Limpiar Filtros">
+          <li>Ubicado al final del panel de filtros.</li>
+          <li>Borra todo lo mostrado en el mapa y todas las selecciones hechas en Inicio, Destino y Rutas.</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Sobre MoviNeiva -->
+<div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered modal-lg">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="aboutModalLabel">Sobre MoviNeiva</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+    </div>
+    <div class="modal-body text-start" style="max-height: 70vh; overflow-y: auto;">
+      <p><strong>MoviNeiva</strong> es una aplicación web desarrollada para facilitar la visualización y exploración del sistema de transporte público de la ciudad de Neiva. Su objetivo principal es brindar a los ciudadanos una herramienta intuitiva y accesible para consultar rutas cargadas en el repositorio de rutas del sistema Migo del SETP, paraderos y zonas de cobertura de manera dinámica.</p>
+
+      <p>Este proyecto nace como una iniciativa de apoyo a la movilidad urbana, integrando tecnologías web y geográficas para mejorar la experiencia de los usuarios del transporte público. A través del uso de mapas interactivos, filtros de búsqueda y geolocalización, MoviNeiva permite encontrar rutas entre distintos barrios, identificar paraderos cercanos, y comprender mejor cómo funciona la red de transporte.</p>
+
+      <p>El sistema fue desarrollado como un aporte al acceso a la información, fomentando una ciudad más conectada y sustentable. La información geográfica empleada proviene de fuentes oficiales.</p>
+
+      <p>MoviNeiva es un proyecto en evolución. Agradecemos cualquier retroalimentación para seguir mejorando la herramienta.</p>
+
+      <p><strong>Versión actual:</strong> 1.0<br>
+      <strong>Última actualización:</strong> Mayo de 2025</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Modal con el formulario incrustado -->
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered modal-lg">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="feedbackModalLabel">Formulario de Opinión sobre MoviNeiva</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+    </div>
+    <div class="modal-body p-0" style="height: 80vh; overflow-y: auto;">
+      <!-- Responsive iframe contenedor -->
+      <div class="ratio ratio-1x1" style="min-height: 100%;">
+        <iframe 
+          src="https://docs.google.com/forms/d/e/1FAIpQLSfLgAs3B5LMI2jMHNSMNbdIDP_BOpRjEAUxaor82o0MAPuNiw/viewform?embedded=true" 
+          style="border:0;" 
+          allowfullscreen
+          loading="lazy">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

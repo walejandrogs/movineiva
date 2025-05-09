@@ -65,12 +65,52 @@ export class MapService {
     }
   }
 
-  clearUserLocation(): void {
-    if (this.userMarker) {
-      this.map.removeLayer(this.userMarker);
-      this.userMarker = null;
-    }
+private watchId: number | null = null;
+private trackingEnabled = false;
+
+toggleUserTracking(): void {
+  if (this.trackingEnabled) {
+    navigator.geolocation.clearWatch(this.watchId!);
+    this.watchId = null;
+    this.trackingEnabled = false;
+    console.log('Seguimiento detenido');
+    this.clearUserLocation();
+
+  } else {
+    this.watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const coords: [number, number] = [position.coords.latitude, position.coords.longitude];
+        
+        if (this.userMarker) {
+          this.userMarker.setLatLng(coords);
+        } else {
+          this.userMarker = L.marker(coords, { icon: this.iconoUserLocation })
+            .addTo(this.map)
+            .bindPopup('Estás aquí.')
+            .openPopup();
+        }
+
+        this.map.setView(coords, this.map.getZoom());
+      },
+      (error) => {
+        alert('No se pudo obtener la ubicación.');
+      }
+    );
+    this.trackingEnabled = true;
+    console.log('Seguimiento activado');
   }
+}
+
+isTrackingEnabled(): boolean {
+  return this.trackingEnabled;
+}
+
+clearUserLocation(): void {
+  if (this.userMarker) {
+    this.map.removeLayer(this.userMarker);
+    this.userMarker = null;
+  }
+}
 
   getMap(): L.Map {
     return this.map;

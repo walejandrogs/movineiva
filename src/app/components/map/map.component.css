@@ -1,0 +1,11 @@
+/* En tu archivo CSS */
+.map-container {
+    z-index: 1;
+    height: 80vh; /* Valor por defecto para pantallas mayores a 500px */
+  }
+  
+  @media (max-width: 500px) {
+    .map-container {
+      height: calc(100vh - 160px);
+    }
+  }

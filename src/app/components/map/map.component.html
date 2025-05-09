@@ -4,7 +4,12 @@
   <button class="btn btn-primary position-absolute top-0 start-0 m-3 z-3"  (click)="toggleFiltro()">
     Filtros
   </button>
-
+  <button 
+  (click)="toggleTracking()" 
+  class="btn btn-primary position-absolute top-0 end-0 m-3 z-3">
+  {{ trackingStatus ? 'Detener seguimiento' : 'Activar seguimiento' }}
+</button>
+  <!-- <button class="btn btn-primary position-absolute top-0 end-0 m-3 z-3" (click)="sincronizarMiUbicacion()">Seguir mi ubicación</button> -->
   <!-- Componente Filtro superpuesto -->
   <div [hidden]="!mostrarFiltro" class="position-absolute top-0 start-0 m-3 z-2 bg-white p-3 rounded shadow overflow-auto"
   style="max-height: calc(100vh - 140px); width: 90vw; max-width: 500px;">
@@ -16,5 +21,5 @@
   </div>
 
   <!-- Mapa -->
-  <div id="map" class="position-absolute top-0 start-0 w-100" style="height: calc(100vh - 120px); z-index: 1;"></div>
+  <div id="map" class=" map-container position-absolute top-0 start-0 w-100 " ></div>
 </div>
