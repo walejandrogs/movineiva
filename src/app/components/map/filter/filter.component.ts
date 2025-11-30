@@ -242,8 +242,6 @@ export class FilterComponent {
             const indexDestino = this.puntoMasCercano(rutaLinea, barrioDestino);
 
             orientacionCorrecta = indexInicio > indexDestino;
-
-            console.log("REVISAAAAAAAr"+estaCercaOrigen + distanciaOrigen + estaCercaDestino +distanciaDestino+ orientacionCorrecta)
           }
 
           if (estaCercaOrigen && estaCercaDestino && orientacionCorrecta && !rutaDirectaEncontrada) {
