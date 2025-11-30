@@ -33,6 +33,9 @@
         [searchable]="true">
       </ng-select>
     </div>
+    <div>
+      <button (click)="activarSeleccionInicio()">Seleccionar punto</button>
+    </div>
   </div>
 </div>
 
@@ -63,6 +66,9 @@
         (change)="onBarrioSeleccionadoDestino()"
         [searchable]="true">
       </ng-select>
+    </div>
+    <div>
+      <button (click)="activarSeleccionFinal()">Seleccionar punto</button>
     </div>
   </div>
 </div>

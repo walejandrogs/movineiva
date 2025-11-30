@@ -25,7 +25,12 @@ export class MapService {
   });
   private map!: L.Map;
   private userMarker: L.Marker | null = null;
+  private startMarker: L.Marker | null = null;
+  private endMarker: L.Marker | null = null;
+
+  private clickHandler: any = null; // Para activar/desactivar el modo selección
   private paraderosLayers: L.LayerGroup[] = [];
+  private selectedCoords: [number, number] | null = null;
   constructor(private http: HttpClient) {}
   barriosLayer: L.GeoJSON<any> | null = null;
   // 👇 Define un icono personalizado
@@ -43,6 +48,61 @@ export class MapService {
 
     return this.map;
   }
+
+  // --------------------------------------------------------
+  // ACTIVAR SELECCION: Retorna coords como PROMESA
+  // --------------------------------------------------------
+  enablePointSelection(markerType: "start" | "end"): Promise<[number, number]> {
+    if (!this.map) return Promise.reject("Mapa no inicializado");
+
+    // Quitamos listener previo si existía
+    this.disablePointSelection();
+
+    // Si ya existía marcador, lo eliminamos para actualizar
+    if (markerType === "start" && this.startMarker) {
+      this.map.removeLayer(this.startMarker);
+      this.startMarker = null;
+    }
+
+    if (markerType === "end" && this.endMarker) {
+      this.map.removeLayer(this.endMarker);
+      this.endMarker = null;
+    }
+
+    // Retornamos una promesa que se resuelve en el clic
+    return new Promise((resolve) => {
+      this.clickHandler = (e: L.LeafletMouseEvent) => {
+        const coords: [number, number] = [e.latlng.lat, e.latlng.lng];
+
+        // Crear el marcador adecuado
+        if (markerType === "start") {
+          this.startMarker = L.marker(coords).addTo(this.map);
+        } else {
+          this.endMarker = L.marker(coords).addTo(this.map);
+        }
+
+        // Desactivamos la selección
+        this.disablePointSelection();
+
+        resolve(coords);
+      };
+
+      this.map.on("click", this.clickHandler);
+    });
+  }
+
+  // --------------------------------------------------------
+  // DESACTIVAR SELECCION
+  // --------------------------------------------------------
+  disablePointSelection() {
+    if (this.map && this.clickHandler) {
+      this.map.off("click", this.clickHandler);
+      this.clickHandler = null;
+    }
+  }
+
+
+
 
   getUserLocation(callback?: (coords: [number, number]) => void): void {
     if (navigator.geolocation) {

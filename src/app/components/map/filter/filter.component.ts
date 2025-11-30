@@ -53,6 +53,8 @@ export class FilterComponent {
   comunaSeleccionadaDestino: number | null = null;
   barrioSeleccionadoDestino: { label: string, value: string } | null = null;
   rutaSeleccionadaDesdeFiltro: string | null = null;
+  coordsInicio: [number,number] | null = null;
+  coordsFinal: [number,number] | null = null;
   
 
   rutas: { nombre: string[]|string, archivo: string }[] = [];
@@ -62,6 +64,7 @@ export class FilterComponent {
   ngOnInit(): void {
     this.routesService.cargarTodasLasRutas().subscribe(rutas => {
       this.rutas = rutas;
+      
     });
 
     this.neighborhoodService.cargarBarrios().subscribe(data => {
@@ -304,48 +307,7 @@ export class FilterComponent {
   useMyLocation(): void {
     this.mapService.getUserLocation((coords) => {
       console.log('Ubicación desde filtro:', coords);
-  
-      if (!coords) {
-        console.error('No se pudo obtener coordenadas.');
-        return;
-      }
-  
-      const puntoUsuario = turf.point([coords[1], coords[0]]); // [lng, lat]
-  
-      let barrioMasCercano = null;
-      let menorDistancia = Infinity;
-  
-      for (const barrio of this.barrios) {
-        const geom = barrio.geometry;
-        const poly = geom.type === 'MultiPolygon'
-          ? turf.multiPolygon(geom.coordinates)
-          : turf.polygon(geom.coordinates);
-  
-        const distancia = turf.pointToPolygonDistance(puntoUsuario, poly, { units: 'meters' });
-  
-        if (distancia < menorDistancia) {
-          menorDistancia = distancia;
-          barrioMasCercano = barrio;
-        }
-      }
-  
-      if (barrioMasCercano) {
-        console.log('Barrio más cercano encontrado:', barrioMasCercano.properties.NOM_BARRIO);
-        
-        // Asignamos el barrio encontrado como seleccionado
-        this.barrioSeleccionadoInicio = {
-          label: barrioMasCercano.properties.NOM_BARRIO,
-          value: barrioMasCercano.properties.NOM_BARRIO
-        };
-  
-        // Actualizamos también la comuna
-        this.comunaSeleccionadaInicio = barrioMasCercano.properties.NO__COMUNA;
-  
-        // Verificamos si ya se puede calcular la ruta
-        this.verificarSeleccion();
-      } else {
-        console.error('No se encontró barrio cercano.');
-      }
+      this.procesarSeleccion(coords,"start");
     });
   }
 
@@ -360,6 +322,22 @@ export class FilterComponent {
   addDescription(description: string) {
     this.description = description; // Guardar la descripción recibida
   }
+
+  activarSeleccionInicio() {
+
+  this.mapService.enablePointSelection("start").then(coords => {
+    console.log("Inicio seleccionado:", coords);
+    this.procesarSeleccion(coords,"start");
+  });
+}
+
+  activarSeleccionFinal() {
+    this.mapService.enablePointSelection("end").then(coords => {
+      console.log("Fin seleccionado:", coords);
+      this.procesarSeleccion(coords,"end");
+    });
+  }
+
   
   limpiarFiltros() {
     this.comunaSeleccionadaInicio = null;
@@ -379,5 +357,63 @@ export class FilterComponent {
     this.mapService.clearMapLayers();
   }
   
+  private procesarSeleccion(coords: [number, number], type : "start" | "end") {
+    if (!coords) {
+      console.error('No se pudo obtener coordenadas.');
+      return;
+    }
+
+    const puntoUsuario = turf.point([coords[1], coords[0]]); // [lng, lat]
+
+    let barrioMasCercano = null;
+    let menorDistancia = Infinity;
+
+    for (const barrio of this.barrios) {
+      const geom = barrio.geometry;
+      const poly = geom.type === 'MultiPolygon'
+        ? turf.multiPolygon(geom.coordinates)
+        : turf.polygon(geom.coordinates);
+
+      const distancia = turf.pointToPolygonDistance(puntoUsuario, poly, { units: 'meters' });
+
+      if (distancia < menorDistancia) {
+        menorDistancia = distancia;
+        barrioMasCercano = barrio;
+      }
+    }
+
+    if (type == "start"){
+      if (barrioMasCercano) {
+        console.log('Barrio más cercano encontrado:', barrioMasCercano.properties.NOM_BARRIO);
+
+        this.barrioSeleccionadoInicio = {
+          label: barrioMasCercano.properties.NOM_BARRIO,
+          value: barrioMasCercano.properties.NOM_BARRIO
+        };
+
+        this.comunaSeleccionadaInicio = barrioMasCercano.properties.NO__COMUNA;
+
+        this.verificarSeleccion();
+      } else {
+        console.error('No se encontró barrio cercano.');
+      }
+    }else if(type == "end"){
+      if (barrioMasCercano) {
+      console.log('Barrio más cercano encontrado:', barrioMasCercano.properties.NOM_BARRIO);
+
+      this.barrioSeleccionadoDestino = {
+        label: barrioMasCercano.properties.NOM_BARRIO,
+        value: barrioMasCercano.properties.NOM_BARRIO
+      };
+
+      this.comunaSeleccionadaDestino = barrioMasCercano.properties.NO__COMUNA;
+
+      this.verificarSeleccion();
+      } else {
+        console.error('No se encontró barrio cercano.');
+      }
+    }
+  }
 }
+
 
