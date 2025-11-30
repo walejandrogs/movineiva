@@ -40,6 +40,18 @@ export class MapComponent implements OnInit {
     console.log(this.filterComponent); // Para verificar que la referencia se ha asignado correctamente
   }
 
+  startIcon = L.icon({
+      iconUrl: 'assets/images/marcInicio.png',
+      iconSize: [40, 40],
+      iconAnchor: [16, 32]
+    });
+  
+  endIcon = L.icon({
+      iconUrl: 'assets/images/marcfinal.png',
+      iconSize: [32, 32],
+      iconAnchor: [16, 32]
+    });
+
   toggleFiltro() {
     this.mostrarFiltro = !this.mostrarFiltro;
   }
@@ -220,55 +232,66 @@ export class MapComponent implements OnInit {
     }
   }
   
+
   resaltarBarrios(barrios: any[]) {
     const map = this.mapService.getMap();
-  
+
     // Limpia barrios anteriores
     this.barriosResaltados.clearLayers();
-  
-    // Define estilos para origen y destino
+
     const estiloOrigen = {
-      color: 'green',
-      fillColor: 'green',
+      color: "green",
+      fillColor: "green",
       fillOpacity: 0.3,
-      weight: 2
+      weight: 2,
     };
-  
+
     const estiloDestino = {
-      color: 'red',
-      fillColor: 'red',
+      color: "red",
+      fillColor: "red",
       fillOpacity: 0.3,
-      weight: 2
+      weight: 2,
     };
-  
-    // Suponiendo que barrios[0] es el origen y barrios[1] es el destino
+
     if (barrios.length > 0) {
       const barrioOrigen = barrios[0];
       const barrioDestino = barrios[1];
-  
-      // Resalta el barrio de origen con verde
-      const barrioLayerOrigen = L.geoJSON(barrioOrigen, { style: estiloOrigen });
-      barrioLayerOrigen.addTo(this.barriosResaltados);
-      barrioLayerOrigen.bindTooltip("Inicio",{
-        permanent: true,
-        direction: "center"
+
+      // ------------------------------
+      // ORIGEN (verde)
+      // ------------------------------
+      const origenLayer = L.geoJSON(barrioOrigen, {
+        style: estiloOrigen,
+        pointToLayer: (feature, latlng) => {
+          // Si es punto → icono de inicio
+          return L.marker(latlng, { icon: this.startIcon });
+        },
       });
-  
-      // Resalta el barrio de destino con rojo
-      const barrioLayerDestino = L.geoJSON(barrioDestino, { style: estiloDestino });
-      barrioLayerDestino.addTo(this.barriosResaltados);
-      barrioLayerDestino.bindTooltip("Destino",{
-        permanent: true,
-        direction: "center"
+
+      origenLayer.addTo(this.barriosResaltados);
+      origenLayer.bindTooltip("Inicio", { permanent: true, direction: "center" });
+
+      // ------------------------------
+      // DESTINO (rojo)
+      // ------------------------------
+      const destinoLayer = L.geoJSON(barrioDestino, {
+        style: estiloDestino,
+        pointToLayer: (feature, latlng) => {
+          // Si es punto → icono de destino
+          return L.marker(latlng, { icon: this.endIcon });
+        },
       });
+
+      destinoLayer.addTo(this.barriosResaltados);
+      destinoLayer.bindTooltip("Destino", { permanent: true, direction: "center" });
     }
-  
+
     this.barriosResaltados.addTo(map);
-  
-    // Centra el mapa en los barrios resaltados
+
+    // Centrar vista
     if (this.barriosResaltados.getLayers().length > 0) {
       map.fitBounds(this.barriosResaltados.getBounds());
     }
   }
-  
+
 }

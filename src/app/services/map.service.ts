@@ -23,6 +23,18 @@ export class MapService {
     popupAnchor: [1, -34],
     shadowSize: [41, 41]
   });
+
+  startIcon = L.icon({
+    iconUrl: 'assets/images/marcInicio.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32]
+  });
+
+  endIcon = L.icon({
+    iconUrl: 'assets/images/marcfinal.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32]
+  });
   private map!: L.Map;
   private userMarker: L.Marker | null = null;
   private startMarker: L.Marker | null = null;
@@ -76,9 +88,9 @@ export class MapService {
 
         // Crear el marcador adecuado
         if (markerType === "start") {
-          this.startMarker = L.marker(coords).addTo(this.map);
+          this.startMarker = L.marker(coords, { icon: this.startIcon }).addTo(this.map);
         } else {
-          this.endMarker = L.marker(coords).addTo(this.map);
+          this.endMarker = L.marker(coords, { icon: this.endIcon }).addTo(this.map);
         }
 
         // Desactivamos la selección
@@ -100,8 +112,6 @@ export class MapService {
       this.clickHandler = null;
     }
   }
-
-
 
 
   getUserLocation(callback?: (coords: [number, number]) => void): void {
