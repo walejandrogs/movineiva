@@ -232,7 +232,7 @@ export class MapComponent implements OnInit {
     }
   }
   
-
+/*
   resaltarBarrios(barrios: any[]) {
     const map = this.mapService.getMap();
 
@@ -284,6 +284,85 @@ export class MapComponent implements OnInit {
 
       destinoLayer.addTo(this.barriosResaltados);
       destinoLayer.bindTooltip("Destino", { permanent: true, direction: "center" });
+    }
+
+    this.barriosResaltados.addTo(map);
+
+    // Centrar vista
+    if (this.barriosResaltados.getLayers().length > 0) {
+      map.fitBounds(this.barriosResaltados.getBounds());
+    }
+  }
+    */
+
+  resaltarBarrios(barrios: any[]) {
+    const map = this.mapService.getMap();
+    let barrioResIni: any;
+    let barrioResDes: any;
+    // Limpia barrios anteriores
+    this.barriosResaltados.clearLayers();
+
+    const estiloOrigen = {
+      color: "green",
+      fillColor: "green",
+      fillOpacity: 0.3,
+      weight: 2,
+    };
+
+    const estiloDestino = {
+      color: "red",
+      fillColor: "red",
+      fillOpacity: 0.3,
+      weight: 2,
+    };
+
+    if (barrios.length > 0) {
+      const barrioOrigen = barrios[0];
+      const barrioDestino = barrios[1];
+
+      // ------------------------------
+      // ORIGEN (verde)
+      // ------------------------------
+      let origenLayer;
+      console.log("ORIGEN TIPO:", barrioOrigen.geometry.type, barrioOrigen);
+      console.log("DESTINO TIPO:", barrioDestino.geometry.type, barrioDestino)
+      if (barrioOrigen.geometry.type === "Point") {
+        // Es punto → marcador con ícono
+        origenLayer = L.marker(
+          [barrioOrigen.geometry.coordinates[1], barrioOrigen.geometry.coordinates[0]],
+          { icon: this.startIcon }
+        );
+      } else {
+        // Es polígono → pintar shape
+        origenLayer = L.geoJSON(barrioOrigen, {
+          style: estiloOrigen,
+        });
+      }
+
+      origenLayer.addTo(this.barriosResaltados);
+      origenLayer.bindTooltip("Inicio", { permanent: true, direction: "center" });
+      
+
+
+      // ------------------------------
+      // DESTINO (rojo)
+      // ------------------------------
+      let destinoLayer;
+
+      if (barrioDestino.geometry.type === "Point") {
+        destinoLayer = L.marker(
+          [barrioDestino.geometry.coordinates[1], barrioDestino.geometry.coordinates[0]],
+          { icon: this.endIcon }
+        );
+      } else {
+        destinoLayer = L.geoJSON(barrioDestino, {
+          style: estiloDestino,
+        });
+      }
+
+      destinoLayer.addTo(this.barriosResaltados);
+      destinoLayer.bindTooltip("Destino", { permanent: true, direction: "center" });
+      
     }
 
     this.barriosResaltados.addTo(map);

@@ -57,6 +57,8 @@ export class FilterComponent {
   coordsFinal: any | null = null;
   puntoOrigen: any;
   puntoDestino: any;
+  tipoFeatureInicio: any;
+  tipoFeatureDestino: any;
   
   
 
@@ -89,7 +91,9 @@ export class FilterComponent {
         this.comunaSeleccionadaInicio = barrioEncontrado.properties.NO__COMUNA;
       }
     }
-    this.verificarSeleccion("poligon");
+    console.log("ACCIONA INICIO")
+    this.tipoFeatureInicio = "poligon";
+    this.verificarSeleccion();
   }
 
   onBarrioSeleccionadoDestino(): void {
@@ -101,7 +105,9 @@ export class FilterComponent {
         this.comunaSeleccionadaDestino = barrioEncontrado.properties.NO__COMUNA;
       }
     }
-    this.verificarSeleccion("poligon");
+    console.log("ACCIONA DESTINO")
+    this.tipoFeatureDestino = "poligon";
+    this.verificarSeleccion();
   }
 
   onComunaSeleccionadaInicio(): void {
@@ -173,8 +179,7 @@ export class FilterComponent {
     return null;
   }
 
-
-  onSeleccionOrigenDestino(type: "point" | "poligon") {
+  onSeleccionOrigenDestino() {
     let barrioOrigen;
     let barrioDestino;
     let estaCercaOrigen: any;
@@ -184,13 +189,18 @@ export class FilterComponent {
     const rutasCercanasDestino: { ruta: any, geojson: any }[] = [];
     let rutaDirectaEncontrada = false; // bandera para saber si ya encontramos ruta directa
     
-    if(type == "point"){
+ 
+    if(this.tipoFeatureInicio == "point"){
       barrioOrigen = this.toPoint(this.coordsInicio);
-      barrioDestino = this.toPoint(this.coordsFinal);
-    } else if(type == "poligon"){
+    }else if(this.tipoFeatureInicio == "poligon"){
       barrioOrigen = this.barrios.find(b => b.properties.NOM_BARRIO === this.barrioSeleccionadoInicio?.value);
+    }
+    if(this.tipoFeatureDestino == "point"){
+      barrioDestino = this.toPoint(this.coordsFinal);
+    }else if(this.tipoFeatureDestino == "poligon"){
       barrioDestino = this.barrios.find(b => b.properties.NOM_BARRIO === this.barrioSeleccionadoDestino?.value);
     }
+
     if (!barrioOrigen || !barrioDestino) {
       console.error('Uno de los puntos no se encuentra' + barrioOrigen + barrioDestino);
       return;
@@ -204,45 +214,45 @@ export class FilterComponent {
       rutas.forEach(r => {
         this.routesService.cargarRuta(r.archivo).subscribe(rutaGeoJSON => {
           rutasCargadas++;
+          let indexInicio;
+          let indexDestino;
 
           const rutaLinea = turf.lineString(rutaGeoJSON.features[0].geometry.coordinates);
-
-          if(type == "poligon"){
-            const origenPoly = barrioOrigen.geometry.type === 'MultiPolygon'
+          
+          if(this.tipoFeatureInicio == "poligon"){
+            let origenPoly = barrioOrigen.geometry.type === 'MultiPolygon'
               ? turf.multiPolygon(barrioOrigen.geometry.coordinates)
               : turf.polygon(barrioOrigen.geometry.coordinates);
-            const destinoPoly = barrioDestino.geometry.type === 'MultiPolygon'
+            let centroOrigen = turf.centerOfMass(origenPoly);
+            let distanciaOrigen = turf.pointToLineDistance(centroOrigen, rutaLinea, { units: 'meters' });
+            estaCercaOrigen = distanciaOrigen <= 400;
+            indexInicio = this.puntoMasCercano(rutaLinea, centroOrigen);
+          }else if (this.tipoFeatureInicio == "point"){
+            let distanciaOrigen = turf.pointToLineDistance(barrioOrigen, rutaLinea, { units: 'meters' });
+            estaCercaOrigen = distanciaOrigen <= 200;
+            indexInicio = this.puntoMasCercano(rutaLinea, barrioOrigen);
+          }
+          if(this.tipoFeatureDestino == "poligon"){
+            let destinoPoly = barrioDestino.geometry.type === 'MultiPolygon'
               ? turf.multiPolygon(barrioDestino.geometry.coordinates)
               : turf.polygon(barrioDestino.geometry.coordinates);
-            const centroOrigen = turf.centerOfMass(origenPoly);
-            const centroDestino = turf.centerOfMass(destinoPoly);
-
-            const distanciaOrigen = turf.pointToLineDistance(centroOrigen, rutaLinea, { units: 'meters' });
-            const distanciaDestino = turf.pointToLineDistance(centroDestino, rutaLinea, { units: 'meters' });
-
-            estaCercaOrigen = distanciaOrigen <= 400;
+            let centroDestino = turf.centerOfMass(destinoPoly);
+            let distanciaDestino = turf.pointToLineDistance(centroDestino, rutaLinea, { units: 'meters' });
             estaCercaDestino = distanciaDestino <= 400;
-            const indexInicio = this.puntoMasCercano(rutaLinea, centroOrigen);
-            const indexDestino = this.puntoMasCercano(rutaLinea, centroDestino);
-
-            orientacionCorrecta = indexInicio > indexDestino;
-          } else if(type == "point"){
-            
-            const distanciaOrigen = turf.pointToLineDistance(barrioOrigen, rutaLinea, { units: 'meters' });
-            const distanciaDestino = turf.pointToLineDistance(barrioDestino, rutaLinea, { units: 'meters' });
-
-            estaCercaOrigen = distanciaOrigen <= 200;
+            indexDestino = this.puntoMasCercano(rutaLinea, centroDestino);
+          }else if(this.tipoFeatureDestino == "point"){
+            let distanciaDestino = turf.pointToLineDistance(barrioDestino, rutaLinea, { units: 'meters' });
             estaCercaDestino = distanciaDestino <= 200;
-            const indexInicio = this.puntoMasCercano(rutaLinea, barrioOrigen);
-            const indexDestino = this.puntoMasCercano(rutaLinea, barrioDestino);
-
-            orientacionCorrecta = indexInicio > indexDestino;
+            indexDestino = this.puntoMasCercano(rutaLinea, barrioDestino);
           }
+          orientacionCorrecta = indexInicio! > indexDestino!;
+          
 
           if (estaCercaOrigen && estaCercaDestino && orientacionCorrecta && !rutaDirectaEncontrada) {
             console.log('[FilterComponent] Ruta directa encontrada');
             this.rutaSeleccionada.emit([r.archivo]);
             this.barriosSeleccionados.emit([barrioOrigen, barrioDestino]);
+            console.log("INFO EMITIDA: ORIGEN ", barrioOrigen,barrioDestino);
             this.actualizarComboRuta(r.archivo);
             rutaDirectaEncontrada = true;
             return;
@@ -336,11 +346,11 @@ export class FilterComponent {
     return indexMasCercano;
   }
   
-  verificarSeleccion(type: "point" | "poligon") {
+  verificarSeleccion() {
     console.log('[FilterComponent] Verificando selección...');
     if (this.barrioSeleccionadoInicio && this.barrioSeleccionadoDestino) {
       console.log('[FilterComponent] Ambos barrios seleccionados');
-      this.onSeleccionOrigenDestino(type);
+      this.onSeleccionOrigenDestino();
     }
   }
   
@@ -451,8 +461,8 @@ export class FilterComponent {
         };
 
         this.comunaSeleccionadaInicio = barrioMasCercano.properties.NO__COMUNA;
-
-        this.verificarSeleccion("point");
+        this.tipoFeatureInicio = "point";
+        this.verificarSeleccion();
 
       } else {
         console.error('No se encontró barrio cercano.');
@@ -468,8 +478,8 @@ export class FilterComponent {
         };
 
         this.comunaSeleccionadaDestino = barrioMasCercano.properties.NO__COMUNA;
-
-        this.verificarSeleccion("point");
+        this.tipoFeatureDestino = "point";
+        this.verificarSeleccion();
       } else {
         console.error('No se encontró barrio cercano.');
       }
